@@ -18,6 +18,7 @@ class Carta:
         self.custo_habilidade = custo_habilidade
         self.tipo_terreno = tipo_terreno
         self.raridade = raridade
+        self.habilidade_usada = False  # <- ESSENCIAL
 
     def __str__(self):
         return (
