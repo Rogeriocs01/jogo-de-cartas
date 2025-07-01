@@ -6,14 +6,12 @@ from mapa import escolher_fase
 from personagens_data import personagens
 
 
-def get_personagem_info(nome_personagem: str) -> dict:
-    """
-    Retorna o dicionário de dados do personagem selecionado.
-    """
+def get_personagem_info(nome_personagem):
     for p in personagens:
-        if p["nome"] == nome_personagem:
+        if p["nome"] in nome_personagem or nome_personagem in p["nome"]:
             return p
     raise ValueError(f"Personagem não encontrado: {nome_personagem}")
+
 
 
 def jogar_campanha(nome_personagem: str, deck_jogador: list):

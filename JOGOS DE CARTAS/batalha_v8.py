@@ -3,6 +3,7 @@ import random
 from carta import Carta
 from executar_habilidade import executar_habilidade
 from card_repository import get_carta_by_id
+from habilidades.habilidades_heroi import heroi_habilidades
 
 class Jogador:
     def __init__(self, nome, terreno_favorito=None, is_bot=False, habilidade_especial=None, custo_habilidade=0):
@@ -16,6 +17,7 @@ class Jogador:
         self.is_bot = is_bot
         self.habilidade_especial = habilidade_especial
         self.custo_habilidade = custo_habilidade
+        self.habilidade_heroi_usada = False
 
     def comprar_carta(self):
         if self.deck:
@@ -63,6 +65,25 @@ def usar_habilidade_de_carta(jogador, inimigo):
     carta_escolhida.habilidade_usada = True
 
 
+def usar_habilidade_heroi(jogador, inimigo):
+    if jogador.habilidade_heroi_usada:
+        print("⚠️ Você já usou sua habilidade especial nesta batalha.")
+        return
+
+    if jogador.habilidade_especial not in heroi_habilidades:
+        print("❌ Este herói não possui habilidade especial registrada.")
+        return
+
+    if jogador.mana < jogador.custo_habilidade:
+        print("⚠️ Mana insuficiente para usar a habilidade especial.")
+        return
+
+    jogador.mana -= jogador.custo_habilidade
+    habilidade = heroi_habilidades[jogador.habilidade_especial]
+    habilidade(jogador, inimigo)
+    jogador.habilidade_heroi_usada = True
+
+
 def turno_jogador(jogador, inimigo):
     print(f"\n🎴 Turno de {jogador.nome}")
     jogador.mana = 3
@@ -75,6 +96,7 @@ def turno_jogador(jogador, inimigo):
         print("1 - Invocar carta")
         print("2 - Atacar")
         print("3 - Usar habilidade de carta")
+        print("4 - Usar habilidade especial do herói")
         print("0 - Encerrar turno")
         escolha = input("Ação: ")
 
@@ -114,6 +136,9 @@ def turno_jogador(jogador, inimigo):
 
         elif escolha == "3":
             usar_habilidade_de_carta(jogador, inimigo)
+
+        elif escolha == "4":
+            usar_habilidade_heroi(jogador, inimigo)
 
         elif escolha == "0":
             break

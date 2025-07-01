@@ -15,9 +15,11 @@ def escolher_fase(progresso):
 
     personagem = personagens[idx]
     nome = personagem["nome"]
-    terreno = personagem["terreno_favorito"]
-    buff = personagem["buffs"][diff]
+    terreno = personagem["terreno"]  # ✅ corrigido
     dificuldade = ["Fácil", "Médio", "Difícil"][diff]
+
+    # Fallback de buff simples
+    buff = {"tipo": "atk", "valor": diff + 1}
 
     print(f"\n=== PRÓXIMA FASE: {proxima}/{total} — {nome} ({dificuldade}) | Terreno: {terreno} ===")
     confirm = input("Pressione ENTER para iniciar esta fase ou 'm' para voltar ao menu: ")
