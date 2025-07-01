@@ -1,37 +1,47 @@
-from selecao_personagem import escolher_personagem
-from deck_personalizado import criar_deck_personalizado
-from selecao_personagem import escolher_personagem
-from inventario_jogador import mostrar_inventario  # Se quiser manter a opção de ver o inventário
+# menu_inicial.py
+from campanha_v1 import jogar_campanha
+from salvar_progresso import salvar_jogo
+from carregar_progresso import carregar_jogo
+from personagens_data import personagens
+from card_repository import get_carta_by_id
+import random
+
 
 def menu_principal():
     while True:
         print("\n=== MENU PRINCIPAL ===")
         print("1 - Iniciar Campanha")
-        print("2 - Ver Inventário de Cartas")
-        print("3 - Sair")
+        print("2 - Continuar Campanha")
+        print("3 - Ver Inventário de Cartas (em breve)")
+        print("4 - Sair")
 
         escolha = input("\nEscolha uma opção: ")
 
         if escolha == "1":
-            heroi = escolher_personagem()
-            deck = criar_deck_personalizado(heroi)
-
-            if not deck:
-                print("⚠️ Não foi possível criar o deck do herói. Verifique a configuração.")
-                continue
-
-            from campanha_v1 import jogar_campanha
+            print("\nEscolha seu herói:")
+            for idx, p in enumerate(personagens):
+                print(f"{idx + 1} - {p['nome']}")
+            indice = int(input("\nDigite o número do personagem desejado: ")) - 1
+            heroi = personagens[indice]["nome"]
+            deck = [get_carta_by_id(f"Carta_{random.randint(1, 80)}") for _ in range(10)]
             jogar_campanha(heroi, deck)
 
         elif escolha == "2":
-            mostrar_inventario()
+            progresso = carregar_jogo()
+            if progresso:
+                heroi, deck, fase = progresso
+                jogar_campanha(heroi, deck, fase)
 
         elif escolha == "3":
-            print("\n👋 Saindo do jogo... Até logo!")
+            print("📦 Inventário ainda em desenvolvimento...")
+
+        elif escolha == "4":
+            print("👋 Saindo do jogo. Até a próxima!")
             break
 
         else:
-            print("\nOpção inválida! Tente novamente.")
+            print("❌ Opção inválida. Tente novamente.")
+
 
 if __name__ == "__main__":
     menu_principal()

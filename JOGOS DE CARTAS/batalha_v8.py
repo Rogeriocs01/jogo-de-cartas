@@ -67,20 +67,20 @@ def usar_habilidade_de_carta(jogador, inimigo):
 
 def usar_habilidade_heroi(jogador, inimigo):
     if jogador.habilidade_heroi_usada:
-        print("⚠️ Você já usou sua habilidade especial nesta batalha.")
         return
-
     if jogador.habilidade_especial not in heroi_habilidades:
-        print("❌ Este herói não possui habilidade especial registrada.")
         return
-
     if jogador.mana < jogador.custo_habilidade:
-        print("⚠️ Mana insuficiente para usar a habilidade especial.")
         return
 
     jogador.mana -= jogador.custo_habilidade
     habilidade = heroi_habilidades[jogador.habilidade_especial]
-    habilidade(jogador, inimigo)
+
+    if jogador.habilidade_especial in ["curar", "comprar_cartas", "reduzir_custo_mana"]:
+        habilidade(jogador)
+    else:
+        habilidade(jogador, inimigo)
+
     jogador.habilidade_heroi_usada = True
 
 
@@ -154,27 +154,41 @@ def turno_inimigo(bot, jogador):
     bot.resetar_habilidades()
     bot.comprar_carta()
 
-    for i in range(len(bot.mao)):
+    # Invocar melhor carta possível
+    bot.mao.sort(key=lambda c: c.ataque + c.defesa, reverse=True)
+    for carta in bot.mao[:]:
         for idx in range(5):
             if not bot.campo[idx]:
-                bot.campo[idx] = bot.mao.pop(i)
-                print(f"🤖 {bot.nome} invocou uma carta!")
+                bot.campo[idx] = carta
+                bot.mao.remove(carta)
+                print(f"🤖 {bot.nome} invocou {carta.nome}!")
                 break
-        if not bot.mao:
-            break
 
-    for idx, carta in enumerate(bot.campo):
-        if carta:
-            alvo = random.randint(0, 4)
-            if jogador.campo[alvo]:
-                jogador.campo[alvo].defesa -= carta.ataque
-                print(f"🤖 {carta.nome} atacou {jogador.campo[alvo].nome}! Nova DEF: {jogador.campo[alvo].defesa}")
-                if jogador.campo[alvo].defesa <= 0:
-                    print(f"💥 {jogador.campo[alvo].nome} foi destruída!")
-                    jogador.campo[alvo] = None
+    # Usar habilidades de carta se possível
+    for carta in bot.campo:
+        if carta and not carta.habilidade_usada and bot.mana >= carta.custo_mana:
+            executar_habilidade(carta.id, carta, bot, jogador)
+            carta.habilidade_usada = True
+            bot.mana -= carta.custo_mana
+
+    # Usar habilidade do herói se possível
+    usar_habilidade_heroi(bot, jogador)
+
+    # Atacar estrategicamente
+    for idx, atacante in enumerate(bot.campo):
+        if atacante:
+            # Atacar carta com menor defesa se houver
+            alvos = [(i, c) for i, c in enumerate(jogador.campo) if c]
+            if alvos:
+                alvo_idx, alvo = min(alvos, key=lambda x: x[1].defesa)
+                alvo.defesa -= atacante.ataque
+                print(f"🤖 {atacante.nome} atacou {alvo.nome}! Nova DEF: {alvo.defesa}")
+                if alvo.defesa <= 0:
+                    print(f"💥 {alvo.nome} foi destruída!")
+                    jogador.campo[alvo_idx] = None
             else:
-                jogador.vida -= carta.ataque
-                print(f"🤖 Ataque direto! {jogador.nome} perdeu {carta.ataque} de vida!")
+                jogador.vida -= atacante.ataque
+                print(f"🤖 Ataque direto! {jogador.nome} perdeu {atacante.ataque} de vida!")
 
 
 def batalha(jogador, bot):

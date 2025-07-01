@@ -1,9 +1,10 @@
 # campanha_v1.py
-from batalha_v8 import Jogador, batalha
-from deck_personalizado import criar_deck_personalizado
-from selecao_personagem import escolher_personagem
+
 from mapa import escolher_fase
 from personagens_data import personagens
+from batalha_v8 import Jogador, batalha
+from card_repository import get_carta_by_id
+import random
 
 
 def get_personagem_info(nome_personagem):
@@ -13,59 +14,55 @@ def get_personagem_info(nome_personagem):
     raise ValueError(f"Personagem não encontrado: {nome_personagem}")
 
 
-
-def jogar_campanha(nome_personagem: str, deck_jogador: list):
-    fase_atual = 0
+def jogar_campanha(nome_personagem, deck):
+    progresso = 0
     total_fases = len(personagens) * 3
 
-    # Pega dados do jogador
-    info_jogador = get_personagem_info(nome_personagem)
-
-    while fase_atual < total_fases:
-        fase_info = escolher_fase(fase_atual)
+    while progresso < total_fases:
+        fase_info = escolher_fase(progresso)
         if fase_info is None:
-            # Voltar ao menu principal
-            return
+            break
 
         nome_inimigo = fase_info["nome"]
-        buff = fase_info["buff"]
         dificuldade = fase_info["dificuldade"]
         terreno = fase_info["terreno"]
+        buff = fase_info.get("buff", {"tipo": "atk", "valor": 0})
 
-        print(f"\n=== FASE {fase_atual+1}/{total_fases}: {nome_inimigo} — {dificuldade} ===")
+        print(f"=== FASE {progresso + 1}/{total_fases}: {nome_inimigo} — {dificuldade} ===")
 
-        # Cria instâncias de jogadores
+        info_jogador = get_personagem_info(nome_personagem)
         player = Jogador(
             nome=nome_personagem,
             is_bot=False,
-            habilidade_especial=info_jogador.get("habilidade"),
-            custo_habilidade=info_jogador.get("custo_mana_habilidade", 0),
-            terreno_favorito=info_jogador.get("terreno_favorito")
+            habilidade_especial=info_jogador.get("habilidade_especial"),
+            custo_habilidade=info_jogador.get("custo_habilidade", 0),
+            terreno_favorito=info_jogador.get("terreno")
         )
+
         bot_info = get_personagem_info(nome_inimigo)
         bot = Jogador(
             nome=nome_inimigo,
             is_bot=True,
-            habilidade_especial=bot_info.get("habilidade"),
-            custo_habilidade=bot_info.get("custo_mana_habilidade", 0),
-            terreno_favorito=bot_info.get("terreno_favorito")
+            habilidade_especial=bot_info.get("habilidade_especial"),
+            custo_habilidade=bot_info.get("custo_habilidade", 0),
+            terreno_favorito=bot_info.get("terreno")
         )
 
-        # Aplica buff de vida ao inimigo
-        bot.vida += int(bot.vida * (buff / 100))
+        # Aplica buff de fase no inimigo
+        bot.vida += int(bot.vida * (buff["valor"] / 100))
 
-        # Monta decks
-        player.deck = deck_jogador.copy()
-        bot.deck = criar_deck_personalizado(nome_inimigo)
+        # Preenche decks
+        for _ in range(10):
+            player.deck.append(get_carta_by_id(f"Carta_{random.randint(1, 80)}"))
+            bot.deck.append(get_carta_by_id(f"Carta_{random.randint(1, 80)}"))
 
-        # Executa batalha
         batalha(player, bot)
 
-        # Se vencedor for player
-        if bot.vida <= 0:
-            print("\n✅ Vitória! Avançando para a próxima fase...")
-            fase_atual += 1
+        if player.vida <= 0:
+            print("\n⚠️ Derrota! Você pode tentar novamente.")
+            break
         else:
-            print("\n❌ Derrota. Tente novamente esta fase.")
+            progresso += 1
 
-    print("\n🏆 PARABÉNS! Você completou toda a campanha!")
+    if progresso >= total_fases:
+        print("\n🎉 Parabéns! Você concluiu toda a campanha!")
