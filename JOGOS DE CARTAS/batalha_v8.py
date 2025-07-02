@@ -4,6 +4,7 @@ from carta import Carta
 from executar_habilidade import executar_habilidade
 from card_repository import get_carta_by_id
 from habilidades.habilidades_heroi import heroi_habilidades
+from interface_terminal import exibir_campo
 
 class Jogador:
     def __init__(self, nome, terreno_favorito=None, is_bot=False, habilidade_especial=None, custo_habilidade=0):
@@ -88,8 +89,8 @@ def turno_jogador(jogador, inimigo):
     print(f"\n🎴 Turno de {jogador.nome}")
     jogador.mana = 3
     jogador.resetar_habilidades()
-    print(f"🔹 Mana disponível: {jogador.mana}")
     jogador.comprar_carta()
+    exibir_campo(jogador, inimigo)
 
     while True:
         print("\nEscolha uma ação:")
@@ -110,6 +111,7 @@ def turno_jogador(jogador, inimigo):
                 carta = jogador.mao.pop(carta_idx)
                 jogador.campo[slot] = carta
                 print(f"🧙 {carta.nome} foi invocada no campo!")
+                exibir_campo(jogador, inimigo)
             else:
                 print("❌ Escolha inválida.")
 
@@ -131,14 +133,17 @@ def turno_jogador(jogador, inimigo):
                 else:
                     inimigo.vida -= atacante.ataque
                     print(f"🏹 Ataque direto! {inimigo.nome} perdeu {atacante.ataque} de vida!")
+                exibir_campo(jogador, inimigo)
             else:
                 print("❌ Slot atacante vazio.")
 
         elif escolha == "3":
             usar_habilidade_de_carta(jogador, inimigo)
+            exibir_campo(jogador, inimigo)
 
         elif escolha == "4":
             usar_habilidade_heroi(jogador, inimigo)
+            exibir_campo(jogador, inimigo)
 
         elif escolha == "0":
             break
@@ -153,8 +158,8 @@ def turno_inimigo(bot, jogador):
     bot.mana = 3
     bot.resetar_habilidades()
     bot.comprar_carta()
+    exibir_campo(bot, jogador)
 
-    # Invocar melhor carta possível
     bot.mao.sort(key=lambda c: c.ataque + c.defesa, reverse=True)
     for carta in bot.mao[:]:
         for idx in range(5):
@@ -164,20 +169,16 @@ def turno_inimigo(bot, jogador):
                 print(f"🤖 {bot.nome} invocou {carta.nome}!")
                 break
 
-    # Usar habilidades de carta se possível
     for carta in bot.campo:
         if carta and not carta.habilidade_usada and bot.mana >= carta.custo_mana:
             executar_habilidade(carta.id, carta, bot, jogador)
             carta.habilidade_usada = True
             bot.mana -= carta.custo_mana
 
-    # Usar habilidade do herói se possível
     usar_habilidade_heroi(bot, jogador)
 
-    # Atacar estrategicamente
     for idx, atacante in enumerate(bot.campo):
         if atacante:
-            # Atacar carta com menor defesa se houver
             alvos = [(i, c) for i, c in enumerate(jogador.campo) if c]
             if alvos:
                 alvo_idx, alvo = min(alvos, key=lambda x: x[1].defesa)
