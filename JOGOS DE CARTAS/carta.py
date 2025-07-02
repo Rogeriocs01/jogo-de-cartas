@@ -1,3 +1,5 @@
+# carta.py
+
 class Carta:
     def __init__(
         self,
@@ -8,8 +10,10 @@ class Carta:
         habilidade: str,
         custo_habilidade: int,
         tipo_terreno: str,
-        raridade: str
+        raridade: str,
+        id: str = None  # <- ADICIONADO
     ):
+        self.id = id  # <- ESSENCIAL para habilidades
         self.nome = nome
         self.custo_mana = custo_mana
         self.ataque = ataque
@@ -18,7 +22,7 @@ class Carta:
         self.custo_habilidade = custo_habilidade
         self.tipo_terreno = tipo_terreno
         self.raridade = raridade
-        self.habilidade_usada = False  # <- ESSENCIAL
+        self.habilidade_usada = False
 
     def __str__(self):
         return (

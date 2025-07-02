@@ -1,10 +1,10 @@
-# batalha_v8.py
 import random
 from carta import Carta
 from executar_habilidade import executar_habilidade
 from card_repository import get_carta_by_id
 from habilidades.habilidades_heroi import heroi_habilidades
 from interface_terminal import exibir_campo
+from efeitos_cartas import *
 
 class Jogador:
     def __init__(self, nome, terreno_favorito=None, is_bot=False, habilidade_especial=None, custo_habilidade=0):
@@ -85,6 +85,22 @@ def usar_habilidade_heroi(jogador, inimigo):
     jogador.habilidade_heroi_usada = True
 
 
+def jogar_carta_de_efeito(carta, jogador, inimigo):
+    if jogador.mana < carta.custo_mana:
+        print("❌ Mana insuficiente para usar esta carta de efeito.")
+        return False
+
+    jogador.mana -= carta.custo_mana
+    efeito = globals().get(carta.habilidade) or globals().get(carta.efeito)
+    if efeito:
+        if efeito.__code__.co_argcount == 2:
+            efeito(jogador)
+        else:
+            efeito(jogador, inimigo)
+    print(f"🪄 {jogador.nome} usou a carta de efeito: {carta.nome}!")
+    return True
+
+
 def turno_jogador(jogador, inimigo):
     print(f"\n🎴 Turno de {jogador.nome}")
     jogador.mana = 3
@@ -104,14 +120,25 @@ def turno_jogador(jogador, inimigo):
         if escolha == "1":
             print("\nMão:")
             for idx, carta in enumerate(jogador.mao):
-                print(f"{idx + 1} - {carta}")
-            slot = int(input("Escolha o slot do campo (1-5): ")) - 1
+                tipo = "(Efeito)" if carta.tipo_terreno == "efeito" else ""
+                print(f"{idx + 1} - {carta.nome} {tipo} | Mana: {carta.custo_mana}")
             carta_idx = int(input("Escolha o número da carta na mão: ")) - 1
-            if 0 <= carta_idx < len(jogador.mao) and 0 <= slot < 5 and not jogador.campo[slot]:
-                carta = jogador.mao.pop(carta_idx)
-                jogador.campo[slot] = carta
-                print(f"🧙 {carta.nome} foi invocada no campo!")
-                exibir_campo(jogador, inimigo)
+            if 0 <= carta_idx < len(jogador.mao):
+                carta = jogador.mao[carta_idx]
+                if carta.tipo_terreno == "efeito":
+                    sucesso = jogar_carta_de_efeito(carta, jogador, inimigo)
+                    if sucesso:
+                        jogador.mao.pop(carta_idx)
+                        exibir_campo(jogador, inimigo)
+                else:
+                    slot = int(input("Escolha o slot do campo (1-5): ")) - 1
+                    if 0 <= slot < 5 and not jogador.campo[slot]:
+                        jogador.mao.pop(carta_idx)
+                        jogador.campo[slot] = carta
+                        print(f"🧙 {carta.nome} foi invocada no campo!")
+                        exibir_campo(jogador, inimigo)
+                    else:
+                        print("❌ Slot inválido.")
             else:
                 print("❌ Escolha inválida.")
 
@@ -164,9 +191,14 @@ def turno_inimigo(bot, jogador):
     for carta in bot.mao[:]:
         for idx in range(5):
             if not bot.campo[idx]:
-                bot.campo[idx] = carta
-                bot.mao.remove(carta)
-                print(f"🤖 {bot.nome} invocou {carta.nome}!")
+                if carta.tipo_terreno == "efeito":
+                    sucesso = jogar_carta_de_efeito(carta, bot, jogador)
+                    if sucesso:
+                        bot.mao.remove(carta)
+                else:
+                    bot.campo[idx] = carta
+                    bot.mao.remove(carta)
+                    print(f"🤖 {bot.nome} invocou {carta.nome}!")
                 break
 
     for carta in bot.campo:
@@ -202,12 +234,3 @@ def batalha(jogador, bot):
         if jogador.vida <= 0:
             print(f"💀 {bot.nome} venceu a batalha!")
             break
-
-
-if __name__ == "__main__":
-    jogador = Jogador("Jogador")
-    bot = Jogador("Bot")
-    for i in range(10):
-        jogador.deck.append(get_carta_by_id(f"Carta_{random.randint(1, 80)}"))
-        bot.deck.append(get_carta_by_id(f"Carta_{random.randint(1, 80)}"))
-    batalha(jogador, bot)

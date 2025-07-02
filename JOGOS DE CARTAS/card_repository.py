@@ -1,4 +1,5 @@
 from carta import Carta
+from habilidades_cartas import get_habilidade_por_id
 
 # Repositório de cartas do jogo: IDs de "Carta_1" a "Carta_80"
 card_repository = {
@@ -81,27 +82,197 @@ card_repository = {
     "Carta_77": {"nome": "Guardião da Névoa", "tipo": "Água", "raridade": "Incomum", "ataque": 2, "defesa": 5, "mana": 3, "custo_habilidade": 2},
     "Carta_78": {"nome": "Espíritu Selvagem", "tipo": "Floresta", "raridade": "Incomum", "ataque": 3, "defesa": 3, "mana": 3, "custo_habilidade": 2},
     "Carta_79": {"nome": "Guarda Real de Gondren", "tipo": "Planície", "raridade": "Raro", "ataque": 4, "defesa": 5, "mana": 5, "custo_habilidade": 3},
-    "Carta_80": {"nome": "Serpente das Profundezas", "tipo": "Água", "raridade": "Raro", "ataque": 5, "defesa": 4, "mana": 5, "custo_habilidade": 3}
+    "Carta_80": {"nome": "Serpente das Profundezas", "tipo": "Água", "raridade": "Raro", "ataque": 5, "defesa": 4, "mana": 5, "custo_habilidade": 3},
+    "Carta_81": {"nome": "Bola de Fogo", "mana": 3, "ataque": 0, "defesa": 0, "tipo": "efeito", "raridade": "rara", "efeito": "efeito_dano_direto"},
+    "Carta_82": {
+        "nome": "Raio Sombrio",
+        "mana": 2,
+        "ataque": 0,
+        "defesa": 0,
+        "tipo": "efeito",
+        "raridade": "rara",
+        "efeito": "efeito_dano_direto"
+    },
+    "Carta_83": {
+        "nome": "Explosão Arcana",
+        "mana": 3,
+        "ataque": 0,
+        "defesa": 0,
+        "tipo": "efeito",
+        "raridade": "comum",
+        "efeito": "efeito_dano_direto"
+    },
+    "Carta_84": {
+        "nome": "Sopro Flamejante",
+        "mana": 2,
+        "ataque": 0,
+        "defesa": 0,
+        "tipo": "efeito",
+        "raridade": "comum",
+        "efeito": "efeito_dano_direto"
+    },
+
+    "Carta_85": {
+        "nome": "Poção de Vida",
+        "mana": 2,
+        "ataque": 0,
+        "defesa": 0,
+        "tipo": "efeito",
+        "raridade": "comum",
+        "efeito": "efeito_cura"
+    },
+    "Carta_86": {
+        "nome": "Luz Restauradora",
+        "mana": 3,
+        "ataque": 0,
+        "defesa": 0,
+        "tipo": "efeito",
+        "raridade": "rara",
+        "efeito": "efeito_cura"
+    },
+    "Carta_87": {
+        "nome": "Alívio Espiritual",
+        "mana": 2,
+        "ataque": 0,
+        "defesa": 0,
+        "tipo": "efeito",
+        "raridade": "comum",
+        "efeito": "efeito_cura"
+    },
+    "Carta_88": {
+        "nome": "Benção da Luz",
+        "mana": 3,
+        "ataque": 0,
+        "defesa": 0,
+        "tipo": "efeito",
+        "raridade": "épica",
+        "efeito": "efeito_cura"
+    },
+
+    "Carta_89": {
+        "nome": "Inspiração",
+        "mana": 2,
+        "ataque": 0,
+        "defesa": 0,
+        "tipo": "efeito",
+        "raridade": "comum",
+        "efeito": "efeito_comprar_cartas"
+    },
+    "Carta_90": {
+        "nome": "Clarividência",
+        "mana": 3,
+        "ataque": 0,
+        "defesa": 0,
+        "tipo": "efeito",
+        "raridade": "rara",
+        "efeito": "efeito_comprar_cartas"
+    },
+    "Carta_91": {
+        "nome": "Sabedoria Antiga",
+        "mana": 2,
+        "ataque": 0,
+        "defesa": 0,
+        "tipo": "efeito",
+        "raridade": "comum",
+        "efeito": "efeito_comprar_cartas"
+    },
+    "Carta_92": {
+        "nome": "Olhar do Oráculo",
+        "mana": 3,
+        "ataque": 0,
+        "defesa": 0,
+        "tipo": "efeito",
+        "raridade": "épica",
+        "efeito": "efeito_comprar_cartas"
+    },
+
+    "Carta_93": {
+        "nome": "Fúria Bélica",
+        "mana": 2,
+        "ataque": 0,
+        "defesa": 0,
+        "tipo": "efeito",
+        "raridade": "comum",
+        "efeito": "efeito_buff_ataque"
+    },
+    "Carta_94": {
+        "nome": "Abençoar Guerreiros",
+        "mana": 3,
+        "ataque": 0,
+        "defesa": 0,
+        "tipo": "efeito",
+        "raridade": "rara",
+        "efeito": "efeito_buff_ataque"
+    },
+    "Carta_95": {
+        "nome": "Força das Sombras",
+        "mana": 2,
+        "ataque": 0,
+        "defesa": 0,
+        "tipo": "efeito",
+        "raridade": "comum",
+        "efeito": "efeito_buff_ataque"
+    },
+    "Carta_96": {
+        "nome": "Grito de Guerra",
+        "mana": 3,
+        "ataque": 0,
+        "defesa": 0,
+        "tipo": "efeito",
+        "raridade": "épica",
+        "efeito": "efeito_buff_ataque"
+    },
+
+    "Carta_97": {
+        "nome": "Névoa Confusa",
+        "mana": 2,
+        "ataque": 0,
+        "defesa": 0,
+        "tipo": "efeito",
+        "raridade": "comum",
+        "efeito": "efeito_debuff_inimigo"
+    },
+    "Carta_98": {
+        "nome": "Toque do Medo",
+        "mana": 3,
+        "ataque": 0,
+        "defesa": 0,
+        "tipo": "efeito",
+        "raridade": "rara",
+        "efeito": "efeito_debuff_inimigo"
+    },
+    "Carta_99": {
+        "nome": "Terror Silencioso",
+        "mana": 2,
+        "ataque": 0,
+        "defesa": 0,
+        "tipo": "efeito",
+        "raridade": "comum",
+        "efeito": "efeito_debuff_inimigo"
+    },
+    "Carta_100": {
+        "nome": "Enfraquecer Exército",
+        "mana": 3,
+        "ataque": 0,
+        "defesa": 0,
+        "tipo": "efeito",
+        "raridade": "épica",
+        "efeito": "efeito_debuff_inimigo"
+    },
 }
 
-
-from habilidades_cartas import get_habilidade_por_id
-
-def get_carta_by_id(carta_id: str) -> Carta:
-    """
-    Retorna uma instância da carta com base no ID informado.
-    A habilidade é carregada do arquivo habilidades_cartas.py.
-    """
-    data = card_repository.get(carta_id)
-    if not data:
-        raise ValueError(f"ID de carta desconhecido: {carta_id}")
-    return Carta(
-        nome=data['nome'],
-        custo_mana=data['mana'],
-        ataque=data['ataque'],
-        defesa=data['defesa'],
-        habilidade=get_habilidade_por_id(carta_id),
-        custo_habilidade=data.get('custo_habilidade', 0),
-        tipo_terreno=data['tipo'],
-        raridade=data['raridade']
-    )
+def get_carta_by_id(carta_id):
+    if carta_id in card_repository:
+        data = card_repository[carta_id]
+        return Carta(
+            id=carta_id,
+            nome=data["nome"],
+            custo_mana=data["mana"],
+            ataque=data["ataque"],
+            defesa=data["defesa"],
+            habilidade=get_habilidade_por_id(carta_id),
+            custo_habilidade=data.get("custo_habilidade", 0),
+            tipo_terreno=data["tipo"],
+            raridade=data["raridade"]
+        )
+    return None
