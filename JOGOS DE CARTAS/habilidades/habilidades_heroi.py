@@ -1,56 +1,65 @@
 # habilidades_heroi.py
+from progresso_heroi import get_bonus_da_habilidade
 
-def curar_heroi(jogador, quantidade=3):
-    jogador.vida += quantidade
-    print(f"✨ {jogador.nome} usou sua habilidade especial e curou {quantidade} de vida! Vida atual: {jogador.vida}")
+def curar_heroi(jogador, quantidade=2):
+    bonus = get_bonus_da_habilidade(jogador.nome)
+    total = quantidade + bonus
+    jogador.vida += total
+    print(f"✨ {jogador.nome} recuperou {total} de vida! Vida atual: {jogador.vida}")
 
-def dano_direto_no_inimigo(inimigo, quantidade=2):
-    inimigo.vida -= quantidade
-    print(f"🔥 Habilidade especial causou {quantidade} de dano direto a {inimigo.nome}! Vida restante: {inimigo.vida}")
-
-def buffar_cartas_do_campo(jogador, stat='ataque', quantidade=1):
-    for carta in jogador.campo:
-        if carta:
-            if stat == 'ataque':
-                carta.ataque += quantidade
-                print(f"💪 {carta.nome} recebe +{quantidade} ATK pela habilidade especial!")
-            elif stat == 'defesa':
-                carta.defesa += quantidade
-                print(f"🛡️ {carta.nome} recebe +{quantidade} DEF pela habilidade especial!")
-
-def enfraquecer_inimigo(inimigo, quantidade=1):
-    for carta in inimigo.campo:
-        if carta:
-            carta.ataque -= quantidade
-            print(f"🔻 {carta.nome} perde {quantidade} ATK por causa da habilidade especial!")
+def dano_heroi(inimigo, quantidade=2):
+    bonus = get_bonus_da_habilidade(inimigo.nome)
+    total = quantidade + bonus
+    inimigo.vida -= total
+    print(f"🔥 {inimigo.nome} sofreu {total} de dano direto! Vida restante: {inimigo.vida}")
 
 def comprar_cartas(jogador, quantidade=2):
-    print(f"📦 {jogador.nome} compra {quantidade} cartas com sua habilidade especial!")
-    for _ in range(quantidade):
+    bonus = get_bonus_da_habilidade(jogador.nome)
+    total = quantidade + bonus
+    for _ in range(total):
         jogador.comprar_carta()
 
 def reduzir_custo_mana(jogador):
+    bonus = get_bonus_da_habilidade(jogador.nome)
     for carta in jogador.mao:
-        carta.custo_mana = max(0, carta.custo_mana - 1)
-    print(f"💰 Todas as cartas na mão de {jogador.nome} agora custam -1 de mana neste turno!")
+        carta.custo_mana = max(0, carta.custo_mana - 1 - bonus)
+    print(f"🔷 Custo de mana das cartas da mão reduzido em {1 + bonus}!")
 
-def dano_em_area(inimigo, quantidade=1):
-    for carta in inimigo.campo:
+def manipulacao_mana(jogador):
+    bonus = get_bonus_da_habilidade(jogador.nome)
+    total = 2 + bonus
+    jogador.mana += total
+    print(f"🔷 {jogador.nome} recuperou {total} de mana adicionais! Mana total: {jogador.mana}")
+
+def reutilizar_habilidade(jogador):
+    for carta in jogador.campo:
         if carta:
-            carta.defesa -= quantidade
-            print(f"💥 {carta.nome} sofreu {quantidade} de dano por habilidade especial!")
-            if carta.defesa <= 0:
-                print(f"☠️ {carta.nome} foi destruída!")
-                index = inimigo.campo.index(carta)
-                inimigo.campo[index] = None
+            carta.habilidade_usada = False
+    print("♻️ Todas as habilidades das cartas em campo foram recarregadas!")
 
-# Mapeamento central
+def espionagem(jogador, inimigo):
+    print(f"🕵️ {jogador.nome} espionou a mão de {inimigo.nome}:")
+    for idx, carta in enumerate(inimigo.mao):
+        print(f"  - {idx + 1}: {carta.nome}")
+
+def furto_temporario(jogador, inimigo):
+    for i, carta in enumerate(inimigo.campo):
+        if carta:
+            copia = carta  # Compartilha referência por 1 turno
+            for slot in range(5):
+                if not jogador.campo[slot]:
+                    jogador.campo[slot] = copia
+                    print(f"🎭 {jogador.nome} roubou temporariamente {carta.nome} do inimigo!")
+                    return
+    print("⚠️ Não foi possível furtar nenhuma carta.")
+
 heroi_habilidades = {
     "curar": curar_heroi,
-    "dano_direto": dano_direto_no_inimigo,
-    "buff_aliados": buffar_cartas_do_campo,
-    "debuff_inimigos": enfraquecer_inimigo,
+    "dano": dano_heroi,
     "comprar_cartas": comprar_cartas,
     "reduzir_custo_mana": reduzir_custo_mana,
-    "dano_em_area": dano_em_area
+    "manipulacao_mana": manipulacao_mana,
+    "reutilizar_habilidade": reutilizar_habilidade,
+    "espionagem": espionagem,
+    "furto_temporario": furto_temporario,
 }
