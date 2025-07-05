@@ -1,15 +1,11 @@
-# campanha_v1.py
+# campanha/controlador.py
 from batalha_v8 import Jogador, batalha
-from mapa import escolher_fase
-from progresso_heroi import ganhar_xp
+from card_repository import get_carta_by_id
+from campanha.progresso import ganhar_xp
+from campanha.fases import escolher_fase
+from campanha.inimigos import get_personagem_info
 from recompensas_cartas import recompensar_vitoria
-from personagens_data import personagens
 
-def get_personagem_info(nome_personagem):
-    for p in personagens:
-        if str(p["nome"]) in str(nome_personagem) or str(nome_personagem) in str(p["nome"]):
-            return p
-    raise ValueError(f"Personagem não encontrado: {nome_personagem}")
 
 def jogar_campanha(heroi_dict, deck):
     nome_personagem = heroi_dict["nome"]
@@ -38,8 +34,8 @@ def jogar_campanha(heroi_dict, deck):
             is_bot=True
         )
 
-        player.deck = [card for card in deck]  # Clonar deck
-        bot.deck = [f"Carta_{i}" for i in range(1, 11)]
+        player.deck = [get_carta_by_id(card) for card in deck]
+        bot.deck = [get_carta_by_id(f"Carta_{i}") for i in range(1, 11)]
 
         batalha(player, bot)
 
