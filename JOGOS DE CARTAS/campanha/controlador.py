@@ -1,10 +1,12 @@
 # campanha/controlador.py
-from batalha_v8 import Jogador, batalha
+from batalha.motor import batalha
 from card_repository import get_carta_by_id
 from campanha.progresso import ganhar_xp
 from campanha.fases import escolher_fase
 from campanha.inimigos import get_personagem_info
 from recompensas_cartas import recompensar_vitoria
+from batalha_v8 import Jogador
+
 
 
 def jogar_campanha(heroi_dict, deck):

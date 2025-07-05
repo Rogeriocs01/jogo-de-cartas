@@ -21,4 +21,11 @@ personagens = [
     {"nome": "Zarok", "terreno": "Trevas", "habilidade_especial": "espionagem", "custo_habilidade": 2},
     {"nome": "Kael", "terreno": "Planície", "habilidade_especial": "buff_aliados", "custo_habilidade": 2},
     {"nome": "Sylara", "terreno": "Água", "habilidade_especial": "furto_temporario", "custo_habilidade": 2},
+    {
+    "nome": "Eldrin",
+    "terreno": "Floresta",
+    "habilidade_especial": "curar",
+    "custo_habilidade": 2
+}
+
 ]

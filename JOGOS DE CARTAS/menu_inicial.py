@@ -1,56 +1,66 @@
-# campanha_v1.py
-from batalha_v8 import Jogador, batalha
-from mapa import escolher_fase
-from progresso_heroi import ganhar_xp
-from recompensas_cartas import recompensar_vitoria
+# menu_inicial.py
+import random
+from campanha.controlador import jogar_campanha
+from recompensas_cartas import carregar_inventario
+from progresso_heroi import carregar_progresso
 from personagens_data import personagens
 from card_repository import get_carta_by_id
 
+def menu_principal():
+    while True:
+        print("\n=== MENU PRINCIPAL ===")
+        print("1 - Iniciar Campanha")
+        print("2 - Ver Inventário de Cartas")
+        print("3 - Ver Progresso do Herói")
+        print("4 - Sair")
 
-def get_personagem_info(nome_personagem):
-    for p in personagens:
-        if str(p["nome"]) in str(nome_personagem) or str(nome_personagem) in str(p["nome"]):
-            return p
-    raise ValueError(f"Personagem não encontrado: {nome_personagem}")
+        escolha = input("\nEscolha uma opção: ")
 
+        if escolha == "1":
+            for i, p in enumerate(personagens, start=1):
+                print(f"{i} - {p['nome']}")
+            opc = input("\nDigite o número do personagem desejado: ")
+            if not opc.isdigit() or not (1 <= int(opc) <= len(personagens)):
+                print("Opção inválida!")
+                continue
 
-def jogar_campanha(heroi_dict, deck):
-    nome_personagem = heroi_dict["nome"]
-    info_jogador = get_personagem_info(nome_personagem)
+            heroi = personagens[int(opc) - 1]
+            print(f"\n✅ Você escolheu: {heroi['nome']}!")
 
-    fase_atual = 1
-    while fase_atual <= 60:
-        fase_info = escolher_fase(fase_atual)
-        bot_info = get_personagem_info(fase_info["nome"])
+            progresso = carregar_progresso()
+            inventario = carregar_inventario()
+            nome = heroi["nome"]
+            nivel = progresso.get(nome, {}).get("nivel", 1)
+            xp = progresso.get(nome, {}).get("xp", 0)
+            cartas = inventario.get(nome, [])
 
-        print(f"\n=== PRÓXIMA FASE: {fase_atual}/60 — {bot_info['nome']} ({fase_info['dificuldade']}) | Terreno: {bot_info['terreno']} ===")
-        entrada = input("Pressione ENTER para iniciar esta fase ou 'm' para voltar ao menu: ")
-        if entrada.lower() == 'm':
+            print(f"\n📊 Progresso de {nome}:")
+            print(f"🔹 Nível: {nivel}")
+            print(f"🔸 XP: {xp}")
+            print(f"📦 Cartas desbloqueadas: {len(cartas)}")
+
+            deck = [get_carta_by_id(f"Carta_{random.randint(1, 80)}") for _ in range(10)]
+            jogar_campanha(heroi, deck)
+
+        elif escolha == "2":
+            inventario = carregar_inventario()
+            for heroi, cartas in inventario.items():
+                print(f"\n🧙‍♂️ {heroi}: {len(cartas)} cartas desbloqueadas")
+                for c in cartas:
+                    print(f" - {c}")
+
+        elif escolha == "3":
+            progresso = carregar_progresso()
+            for heroi, dados in progresso.items():
+                print(f"\n🧝‍♀️ {heroi} — Nível {dados['nivel']} | XP: {dados['xp']}/100")
+
+        elif escolha == "4":
+            print("Saindo do jogo...")
             break
 
-        player = Jogador(
-            nome=info_jogador["nome"],
-            terreno_favorito=info_jogador["terreno"],
-            habilidade_especial=info_jogador.get("habilidade_especial"),
-            custo_habilidade=info_jogador.get("custo_habilidade", 2),
-        )
-
-        bot = Jogador(
-            nome=bot_info["nome"],
-            terreno_favorito=bot_info["terreno"],
-            is_bot=True
-        )
-
-        player.deck = [get_carta_by_id(card) for card in deck]
-        bot.deck = [get_carta_by_id(f"Carta_{i}") for i in range(1, 11)]
-
-        batalha(player, bot)
-
-        if player.vida > 0:
-            print(f"\n🏆 Você venceu a fase {fase_atual}!")
-            ganhar_xp(player.nome, 100)
-            recompensar_vitoria(player.nome)
-            fase_atual += 1
         else:
-            print("\n💀 Você foi derrotado. Retorne ao menu para tentar novamente.")
-            break
+            print("Opção inválida. Tente novamente.")
+
+
+if __name__ == "__main__":
+    menu_principal()
