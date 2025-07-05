@@ -8,7 +8,6 @@ from recompensas_cartas import recompensar_vitoria
 from batalha_v8 import Jogador
 
 
-
 def jogar_campanha(heroi_dict, deck):
     nome_personagem = heroi_dict["nome"]
     info_jogador = get_personagem_info(nome_personagem)
@@ -36,8 +35,8 @@ def jogar_campanha(heroi_dict, deck):
             is_bot=True
         )
 
-        player.deck = [get_carta_by_id(card) for card in deck]
-        bot.deck = [get_carta_by_id(f"Carta_{i}") for i in range(1, 11)]
+        player.deck = [get_carta_by_id(card) for card in deck if get_carta_by_id(card) is not None]
+        bot.deck = [get_carta_by_id(f"Carta_{i}") for i in range(1, 11) if get_carta_by_id(f"Carta_{i}") is not None]
 
         batalha(player, bot)
 

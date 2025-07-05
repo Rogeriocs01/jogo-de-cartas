@@ -1,10 +1,10 @@
-# batalha_v8.py (modo de teste isolado)
+# batalha_v8.py (modo de teste isolado com classe Jogador atualizada)
 import random
 from batalha.motor import batalha
 from card_repository import get_carta_by_id
 
 class Jogador:
-    def __init__(self, nome):
+    def __init__(self, nome, terreno_favorito=None, is_bot=False, habilidade_especial=None, custo_habilidade=0):
         self.nome = nome
         self.vida = 20
         self.mana = 3
@@ -12,10 +12,9 @@ class Jogador:
         self.mao = []
         self.campo = [None] * 5
         self.terreno_favorito = terreno_favorito
-        self.terreno_favorito = None
-        self.is_bot = False
-        self.habilidade_especial = None
-        self.custo_habilidade = 0
+        self.is_bot = is_bot
+        self.habilidade_especial = habilidade_especial
+        self.custo_habilidade = custo_habilidade
         self.habilidade_heroi_usada = False
 
     def comprar_carta(self):
@@ -30,9 +29,8 @@ class Jogador:
                 carta.habilidade_usada = False
 
 if __name__ == "__main__":
-    jogador = Jogador("Jogador")
-    bot = Jogador("Bot")
-    bot.is_bot = True
+    jogador = Jogador("Player 1")
+    bot = Jogador("Player 2", is_bot=True)
 
     for _ in range(10):
         jogador.deck.append(get_carta_by_id(f"Carta_{random.randint(1, 80)}"))
