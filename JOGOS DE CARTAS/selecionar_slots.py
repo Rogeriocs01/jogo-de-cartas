@@ -1,3 +1,4 @@
+#selecionar_slot
 def selecionar_cartas_para_slots(jogador):
     print("\n📥 Posicione suas cartas nos slots iniciais:")
     print(f"Mana disponível: {jogador.mana}")

@@ -3,7 +3,9 @@ from batalha_v8 import Jogador, batalha
 from mapa import escolher_fase
 from progresso_heroi import ganhar_xp
 from recompensas_cartas import recompensar_vitoria
+from campanha.recompensas_por_fase import verificar_recompensa  # ✅ NOVO
 from personagens_data import personagens
+from dados.status_heroi import exibir_status_heroi
 
 def get_personagem_info(nome_personagem):
     for p in personagens:
@@ -21,6 +23,10 @@ def jogar_campanha(heroi_dict, deck):
         bot_info = get_personagem_info(fase_info["nome"])
 
         print(f"\n=== PRÓXIMA FASE: {fase_atual}/60 — {bot_info['nome']} ({fase_info['dificuldade']}) | Terreno: {bot_info['terreno']} ===")
+
+        # ✅ Exibe status do herói antes da fase
+        exibir_status_heroi(nome_personagem)
+
         entrada = input("Pressione ENTER para iniciar esta fase ou 'm' para voltar ao menu: ")
         if entrada.lower() == 'm':
             break
@@ -47,6 +53,7 @@ def jogar_campanha(heroi_dict, deck):
             print(f"\n🏆 Você venceu a fase {fase_atual}!")
             ganhar_xp(player.nome, 100)
             recompensar_vitoria(player.nome)
+            verificar_recompensa(fase_atual, player.nome)  # ✅ NOVO
             fase_atual += 1
         else:
             print("\n💀 Você foi derrotado. Retorne ao menu para tentar novamente.")
