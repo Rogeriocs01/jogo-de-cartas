@@ -1,6 +1,5 @@
 # batalha_v8.py (modo de teste isolado com classe Jogador atualizada)
 import random
-from batalha.motor import batalha
 from card_repository import get_carta_by_id
 
 class Jogador:
@@ -28,12 +27,33 @@ class Jogador:
             if carta:
                 carta.habilidade_usada = False
 
-if __name__ == "__main__":
-    jogador = Jogador("Player 1")
-    bot = Jogador("Player 2", is_bot=True)
+# 🔽 Sistema de batalha básico para testes standalone
+def batalha(jogador, bot):
+    print("\n🎮 Iniciando batalha de teste...\n")
 
+    # 🔹 Comprar 5 cartas iniciais
+    for _ in range(5):
+        jogador.comprar_carta()
+        bot.comprar_carta()
+
+    # Exibe informações básicas
+    print(f"{jogador.nome} - Vida: {jogador.vida} | Mana: {jogador.mana}")
+    print(f"{bot.nome} - Vida: {bot.vida} | Mana: {bot.mana}")
+
+    print("\n🖐️ Mão do jogador:")
+    for i, carta in enumerate(jogador.mao, start=1):
+        print(f"{i} - {carta.nome} | Mana: {carta.custo_mana}")
+
+if __name__ == "__main__":
+    jogador = Jogador("Deus do Debug")
+    bot = Jogador("Eldrin", is_bot=True)
+
+    # 🔧 Deck do Deus do Debug com cartas overpower
+    for i in range(1, 11):
+        jogador.deck.append(get_carta_by_id(f"Carta_Debug_{i}"))
+
+    # 🔧 Deck padrão para o bot
     for _ in range(10):
-        jogador.deck.append(get_carta_by_id(f"Carta_{random.randint(1, 80)}"))
         bot.deck.append(get_carta_by_id(f"Carta_{random.randint(1, 80)}"))
 
     batalha(jogador, bot)

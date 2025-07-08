@@ -1,14 +1,16 @@
 # campanha/controlador.py
-from batalha.motor import batalha
+
 from card_repository import get_carta_by_id
 from campanha.progresso import ganhar_xp
 from campanha.fases import escolher_fase
 from campanha.inimigos import get_personagem_info
-from campanha.recompensas_por_fase import verificar_recompensa  # ✅ NOVO IMPORT
+from campanha.recompensas_por_fase import verificar_recompensa
 from recompensas_cartas import recompensar_vitoria
-from batalha_v8 import Jogador
 from inventario_jogador import mostrar_inventario
 
+# ✅ Importações corretas e definitivas
+from batalha.motor import batalha
+from batalha.jogador import Jogador
 
 def jogar_campanha(heroi_dict, deck):
     nome_personagem = heroi_dict["nome"]
@@ -46,8 +48,8 @@ def jogar_campanha(heroi_dict, deck):
             print(f"\n🏆 Você venceu a fase {fase_atual}!")
             ganhar_xp(player.nome, 100)
             recompensar_vitoria(player.nome)
-            verificar_recompensa(fase_atual, player.nome)  # ✅ NOVO
-            mostrar_inventario(player.nome)  # ✅ NOVO
+            verificar_recompensa(fase_atual, player.nome)
+            mostrar_inventario(player.nome)
             fase_atual += 1
         else:
             print("\n💀 Você foi derrotado. Retorne ao menu para tentar novamente.")

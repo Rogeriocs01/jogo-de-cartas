@@ -1,4 +1,3 @@
-# menu_inicial.py
 import random
 from campanha.controlador import jogar_campanha
 from inventario_jogador import carregar_inventario
@@ -11,14 +10,14 @@ from loja import abrir_loja
 heroi = None  # ✅ Variável global para reuso na loja
 
 def menu_principal():
-    global heroi  # ✅ Para manter o herói selecionado entre as opções
+    global heroi
 
     while True:
         print("\n=== MENU PRINCIPAL ===")
         print("1 - Iniciar Campanha")
         print("2 - Ver Inventário de Cartas")
         print("3 - Ver Painel de Progresso dos Heróis")
-        print("4 - Acessar Loja de Cartas")  # 🆕
+        print("4 - Acessar Loja de Cartas")
         print("5 - Sair")
 
         escolha = input("\nEscolha uma opção: ")
@@ -47,8 +46,19 @@ def menu_principal():
             print(f"🔸 XP: {xp}")
             print(f"📦 Cartas desbloqueadas: {len(cartas)}")
 
-            # Deck aleatório temporário
-            deck = [get_carta_by_id(f"Carta_{random.randint(1, 80)}") for _ in range(10)]
+            # 🔧 Montar deck
+            if nome == "Deus do Debug":
+                deck = [get_carta_by_id(f"Carta_Debug_{i}") for i in range(1, 11)]
+            else:
+                deck = []
+                while len(deck) < 10:
+                    carta = get_carta_by_id(f"Carta_{random.randint(1, 80)}")
+                    if carta:
+                        deck.append(carta)
+
+            # 💬 Debug opcional
+            print("🧪 Deck gerado:", [carta.nome for carta in deck])
+
             jogar_campanha(heroi, deck)
 
         elif escolha == "2":

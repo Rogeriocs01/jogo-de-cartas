@@ -29,7 +29,7 @@ def criar_deck_personalizado(personagem_nome: str):
         "Gorim, o Guerreiro Anão":      ["Carta_76","Carta_77","Carta_78","Carta_79","Carta_80"] * 2,
 
         # 🔥 Deck especial para testes: cartas overpower
-        "Deus do Debug": [f"Carta_Debug_{i}" for i in range(1, 11)],
+        "Deus do Debug": [f"Carta_Debug_{i}" for i in range(1, 10)],
     }
 
     # Obter a lista de IDs ou usar um fallback genérico (primeiras 10 cartas)
