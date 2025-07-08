@@ -27,7 +27,9 @@ def criar_deck_personalizado(personagem_nome: str):
         "Volgath, o Senhor dos Dragões": ["Carta_66","Carta_67","Carta_68","Carta_69","Carta_70"] * 2,
         "Feyra, a Caçadora de Almas":   ["Carta_71","Carta_72","Carta_73","Carta_74","Carta_75"] * 2,
         "Gorim, o Guerreiro Anão":      ["Carta_76","Carta_77","Carta_78","Carta_79","Carta_80"] * 2,
-        # Se quiser, adicione aqui outros personagens com deck próprio...
+
+        # 🔥 Deck especial para testes: cartas overpower
+        "Deus do Debug": [f"Carta_Debug_{i}" for i in range(1, 11)],
     }
 
     # Obter a lista de IDs ou usar um fallback genérico (primeiras 10 cartas)

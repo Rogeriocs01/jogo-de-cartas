@@ -84,181 +84,37 @@ card_repository = {
     "Carta_79": {"nome": "Guarda Real de Gondren", "tipo": "Planície", "raridade": "Raro", "ataque": 4, "defesa": 5, "mana": 5, "custo_habilidade": 3},
     "Carta_80": {"nome": "Serpente das Profundezas", "tipo": "Água", "raridade": "Raro", "ataque": 5, "defesa": 4, "mana": 5, "custo_habilidade": 3},
     "Carta_81": {"nome": "Bola de Fogo", "mana": 3, "ataque": 0, "defesa": 0, "tipo": "efeito", "raridade": "rara", "efeito": "efeito_dano_direto"},
-    "Carta_82": {
-        "nome": "Raio Sombrio",
-        "mana": 2,
-        "ataque": 0,
-        "defesa": 0,
-        "tipo": "efeito",
-        "raridade": "rara",
-        "efeito": "efeito_dano_direto"
-    },
-    "Carta_83": {
-        "nome": "Explosão Arcana",
-        "mana": 3,
-        "ataque": 0,
-        "defesa": 0,
-        "tipo": "efeito",
-        "raridade": "comum",
-        "efeito": "efeito_dano_direto"
-    },
-    "Carta_84": {
-        "nome": "Sopro Flamejante",
-        "mana": 2,
-        "ataque": 0,
-        "defesa": 0,
-        "tipo": "efeito",
-        "raridade": "comum",
-        "efeito": "efeito_dano_direto"
-    },
+    "Carta_82": {"nome": "Raio Sombrio", "mana": 2, "ataque": 0, "defesa": 0, "tipo": "efeito", "raridade": "rara", "efeito": "efeito_dano_direto"},
+    "Carta_83": {"nome": "Explosão Arcana", "mana": 3, "ataque": 0, "defesa": 0, "tipo": "efeito", "raridade": "comum", "efeito": "efeito_dano_direto"},
+    "Carta_84": {"nome": "Sopro Flamejante", "mana": 2, "ataque": 0, "defesa": 0, "tipo": "efeito", "raridade": "comum","efeito": "efeito_dano_direto"},
+    "Carta_85": {"nome": "Poção de Vida", "mana": 2, "ataque": 0, "defesa": 0, "tipo": "efeito", "raridade": "comum", "efeito": "efeito_cura"},
+    "Carta_86": {"nome": "Luz Restauradora", "mana": 3, "ataque": 0, "defesa": 0, "tipo": "efeito", "raridade": "rara", "efeito": "efeito_cura"},
+    "Carta_87": {"nome": "Alívio Espiritual", "mana": 2, "ataque": 0, "defesa": 0, "tipo": "efeito", "raridade": "comum", "efeito": "efeito_cura"},
+    "Carta_88": {"nome": "Benção da Luz", "mana": 3, "ataque": 0, "defesa": 0, "tipo": "efeito", "raridade": "épica", "efeito": "efeito_cura"},
+    "Carta_89": {"nome": "Inspiração", "mana": 2, "ataque": 0, "defesa": 0, "tipo": "efeito", "raridade": "comum", "efeito": "efeito_comprar_cartas"},
+    "Carta_90": {"nome": "Clarividência", "mana": 3,"ataque": 0, "defesa": 0, "tipo": "efeito", "raridade": "rara", "efeito": "efeito_comprar_cartas"},
+    "Carta_91": {"nome": "Sabedoria Antiga", "mana": 2, "ataque": 0, "defesa": 0, "tipo": "efeito", "raridade": "comum", "efeito": "efeito_comprar_cartas"},
+    "Carta_92": {"nome": "Olhar do Oráculo", "mana": 3, "ataque": 0, "defesa": 0, "tipo": "efeito", "raridade": "épica", "efeito": "efeito_comprar_cartas"},
+    "Carta_93": {"nome": "Fúria Bélica", "mana": 2, "ataque": 0, "defesa": 0, "tipo": "efeito", "raridade": "comum", "efeito": "efeito_buff_ataque"},
+    "Carta_94": {"nome": "Abençoar Guerreiros", "mana": 3, "ataque": 0, "defesa": 0, "tipo": "efeito", "raridade": "rara", "efeito": "efeito_buff_ataque"},
+    "Carta_95": {"nome": "Força das Sombras", "mana": 2, "ataque": 0, "defesa": 0, "tipo": "efeito", "raridade": "comum", "efeito": "efeito_buff_ataque"},
+    "Carta_96": {"nome": "Grito de Guerra", "mana": 3, "ataque": 0, "defesa": 0, "tipo": "efeito", "raridade": "épica", "efeito": "efeito_buff_ataque"},
+    "Carta_97": {"nome": "Névoa Confusa", "mana": 2, "ataque": 0, "defesa": 0, "tipo": "efeito", "raridade": "comum", "efeito": "efeito_debuff_inimigo"},
+    "Carta_98": {"nome": "Toque do Medo", "mana": 3, "ataque": 0, "defesa": 0, "tipo": "efeito", "raridade": "rara", "efeito": "efeito_debuff_inimigo"},
+    "Carta_99": {"nome": "Terror Silencioso", "mana": 2, "ataque": 0, "defesa": 0, "tipo": "efeito", "raridade": "comum", "efeito": "efeito_debuff_inimigo"},
+    "Carta_100":{"nome": "Enfraquecer Exército", "mana": 3, "ataque": 0, "defesa": 0, "tipo": "efeito", "raridade": "épica", "efeito": "efeito_debuff_inimigo"},
+        # 🔧 Cartas overpower para testes com o personagem especial "Deus do Debug"
+    "Carta_Debug_1": {"nome": "Debugador Supremo 1", "tipo": "Código", "raridade": "Lendária", "ataque": 99, "defesa": 99, "mana": 1, "custo_habilidade": 0},
+    "Carta_Debug_2": {"nome": "Debugador Supremo 2", "tipo": "Código", "raridade": "Lendária", "ataque": 99, "defesa": 99, "mana": 1, "custo_habilidade": 0},
+    "Carta_Debug_3": {"nome": "Debugador Supremo 3", "tipo": "Código", "raridade": "Lendária", "ataque": 99, "defesa": 99, "mana": 1, "custo_habilidade": 0},
+    "Carta_Debug_4": {"nome": "Debugador Supremo 4", "tipo": "Código", "raridade": "Lendária", "ataque": 99, "defesa": 99, "mana": 1, "custo_habilidade": 0},
+    "Carta_Debug_5": {"nome": "Debugador Supremo 5", "tipo": "Código", "raridade": "Lendária", "ataque": 99, "defesa": 99, "mana": 1, "custo_habilidade": 0},
+    "Carta_Debug_6": {"nome": "Debugador Supremo 6", "tipo": "Código", "raridade": "Lendária", "ataque": 99, "defesa": 99, "mana": 1, "custo_habilidade": 0},
+    "Carta_Debug_7": {"nome": "Debugador Supremo 7", "tipo": "Código", "raridade": "Lendária", "ataque": 99, "defesa": 99, "mana": 1, "custo_habilidade": 0},
+    "Carta_Debug_8": {"nome": "Debugador Supremo 8", "tipo": "Código", "raridade": "Lendária", "ataque": 99, "defesa": 99, "mana": 1, "custo_habilidade": 0},
+    "Carta_Debug_9": {"nome": "Debugador Supremo 9", "tipo": "Código", "raridade": "Lendária", "ataque": 99, "defesa": 99, "mana": 1, "custo_habilidade": 0},
+    "Carta_Debug_10": {"nome": "Debugador Supremo 10", "tipo": "Código", "raridade": "Lendária", "ataque": 99, "defesa": 99, "mana": 1, "custo_habilidade": 0}
 
-    "Carta_85": {
-        "nome": "Poção de Vida",
-        "mana": 2,
-        "ataque": 0,
-        "defesa": 0,
-        "tipo": "efeito",
-        "raridade": "comum",
-        "efeito": "efeito_cura"
-    },
-    "Carta_86": {
-        "nome": "Luz Restauradora",
-        "mana": 3,
-        "ataque": 0,
-        "defesa": 0,
-        "tipo": "efeito",
-        "raridade": "rara",
-        "efeito": "efeito_cura"
-    },
-    "Carta_87": {
-        "nome": "Alívio Espiritual",
-        "mana": 2,
-        "ataque": 0,
-        "defesa": 0,
-        "tipo": "efeito",
-        "raridade": "comum",
-        "efeito": "efeito_cura"
-    },
-    "Carta_88": {
-        "nome": "Benção da Luz",
-        "mana": 3,
-        "ataque": 0,
-        "defesa": 0,
-        "tipo": "efeito",
-        "raridade": "épica",
-        "efeito": "efeito_cura"
-    },
-
-    "Carta_89": {
-        "nome": "Inspiração",
-        "mana": 2,
-        "ataque": 0,
-        "defesa": 0,
-        "tipo": "efeito",
-        "raridade": "comum",
-        "efeito": "efeito_comprar_cartas"
-    },
-    "Carta_90": {
-        "nome": "Clarividência",
-        "mana": 3,
-        "ataque": 0,
-        "defesa": 0,
-        "tipo": "efeito",
-        "raridade": "rara",
-        "efeito": "efeito_comprar_cartas"
-    },
-    "Carta_91": {
-        "nome": "Sabedoria Antiga",
-        "mana": 2,
-        "ataque": 0,
-        "defesa": 0,
-        "tipo": "efeito",
-        "raridade": "comum",
-        "efeito": "efeito_comprar_cartas"
-    },
-    "Carta_92": {
-        "nome": "Olhar do Oráculo",
-        "mana": 3,
-        "ataque": 0,
-        "defesa": 0,
-        "tipo": "efeito",
-        "raridade": "épica",
-        "efeito": "efeito_comprar_cartas"
-    },
-
-    "Carta_93": {
-        "nome": "Fúria Bélica",
-        "mana": 2,
-        "ataque": 0,
-        "defesa": 0,
-        "tipo": "efeito",
-        "raridade": "comum",
-        "efeito": "efeito_buff_ataque"
-    },
-    "Carta_94": {
-        "nome": "Abençoar Guerreiros",
-        "mana": 3,
-        "ataque": 0,
-        "defesa": 0,
-        "tipo": "efeito",
-        "raridade": "rara",
-        "efeito": "efeito_buff_ataque"
-    },
-    "Carta_95": {
-        "nome": "Força das Sombras",
-        "mana": 2,
-        "ataque": 0,
-        "defesa": 0,
-        "tipo": "efeito",
-        "raridade": "comum",
-        "efeito": "efeito_buff_ataque"
-    },
-    "Carta_96": {
-        "nome": "Grito de Guerra",
-        "mana": 3,
-        "ataque": 0,
-        "defesa": 0,
-        "tipo": "efeito",
-        "raridade": "épica",
-        "efeito": "efeito_buff_ataque"
-    },
-
-    "Carta_97": {
-        "nome": "Névoa Confusa",
-        "mana": 2,
-        "ataque": 0,
-        "defesa": 0,
-        "tipo": "efeito",
-        "raridade": "comum",
-        "efeito": "efeito_debuff_inimigo"
-    },
-    "Carta_98": {
-        "nome": "Toque do Medo",
-        "mana": 3,
-        "ataque": 0,
-        "defesa": 0,
-        "tipo": "efeito",
-        "raridade": "rara",
-        "efeito": "efeito_debuff_inimigo"
-    },
-    "Carta_99": {
-        "nome": "Terror Silencioso",
-        "mana": 2,
-        "ataque": 0,
-        "defesa": 0,
-        "tipo": "efeito",
-        "raridade": "comum",
-        "efeito": "efeito_debuff_inimigo"
-    },
-    "Carta_100": {
-        "nome": "Enfraquecer Exército",
-        "mana": 3,
-        "ataque": 0,
-        "defesa": 0,
-        "tipo": "efeito",
-        "raridade": "épica",
-        "efeito": "efeito_debuff_inimigo"
-    },
 }
 
 def get_carta_by_id(carta_id):

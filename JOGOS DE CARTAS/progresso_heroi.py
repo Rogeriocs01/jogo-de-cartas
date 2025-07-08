@@ -3,11 +3,8 @@ import json
 import os
 
 CAMINHO_SALVAMENTO = "dados/progresso_herois.json"
-
-# Garante que a pasta existe
 os.makedirs("dados", exist_ok=True)
 
-# XP necessário por nível
 XP_POR_NIVEL = {
     1: 0,
     2: 100,
@@ -34,18 +31,28 @@ def salvar_progresso(dados):
 def inicializar_heroi(nome):
     progresso = carregar_progresso()
     if nome not in progresso:
-        progresso[nome] = {"xp": 0, "nivel": 1}
+        progresso[nome] = {
+            "xp": 0,
+            "nivel": 1,
+            "moedas": 0
+        }
         salvar_progresso(progresso)
+    else:
+        # Adiciona moedas se herói é antigo e ainda não tem
+        if "moedas" not in progresso[nome]:
+            progresso[nome]["moedas"] = 0
+            salvar_progresso(progresso)
     return progresso[nome]
 
 def ganhar_xp(nome, quantidade):
     progresso = carregar_progresso()
-    heroi = progresso.get(nome, {"xp": 0, "nivel": 1})
-    heroi["xp"] += quantidade
+    heroi = progresso.get(nome, {"xp": 0, "nivel": 1, "moedas": 0})
 
-    # Verifica se subiu de nível
+    heroi["xp"] += quantidade
+    heroi["moedas"] += quantidade // 10  # Exemplo: 100 XP → 10 moedas
+
     nivel_atual = heroi["nivel"]
-    while nivel_atual < 10 and heroi["xp"] >= XP_POR_NIVEL[nivel_atual + 1]:
+    while nivel_atual < 10 and heroi["xp"] >= XP_POR_NIVEL.get(nivel_atual + 1, float("inf")):
         nivel_atual += 1
         print(f"⬆️ {nome} subiu para o nível {nivel_atual}!")
 
@@ -59,7 +66,6 @@ def get_bonus_da_habilidade(nome):
     heroi = progresso.get(nome, {"nivel": 1})
     nivel = heroi.get("nivel", 1)
 
-    # Lógica simples: bônus = +1 por 3 níveis (até no máx. +3)
     if nivel >= 9:
         return 3
     elif nivel >= 5:
@@ -67,3 +73,22 @@ def get_bonus_da_habilidade(nome):
     elif nivel >= 2:
         return 1
     return 0
+
+def adicionar_moedas(nome, valor):
+    progresso = carregar_progresso()
+    heroi = progresso.get(nome)
+    if not heroi:
+        heroi = inicializar_heroi(nome)
+    heroi["moedas"] += valor
+    progresso[nome] = heroi
+    salvar_progresso(progresso)
+
+def remover_moedas(nome, valor):
+    progresso = carregar_progresso()
+    heroi = progresso.get(nome)
+    if not heroi or heroi.get("moedas", 0) < valor:
+        return False
+    heroi["moedas"] -= valor
+    progresso[nome] = heroi
+    salvar_progresso(progresso)
+    return True
