@@ -1,5 +1,3 @@
-# menu_inicial.py
-
 import random
 from campanha.controlador import jogar_campanha
 from inventario_jogador import carregar_inventario
@@ -7,20 +5,22 @@ from progresso_heroi import carregar_progresso
 from personagens_data import personagens
 from dados.painel_progresso import exibir_painel_progresso
 from loja import abrir_loja
-from deck_personalizado import criar_deck_personalizado  # ✅ Correto
+from deck_personalizado import criar_deck_personalizado
+from campanha.progresso_fases import exibir_progresso_fases
 
-heroi = None  # ✅ Variável global para reuso na loja
+heroi = None  # ✅ Variável global para manter herói selecionado
 
 def menu_principal():
-    global heroi  # ✅ Para manter o herói selecionado entre as opções
+    global heroi
 
     while True:
         print("\n=== MENU PRINCIPAL ===")
         print("1 - Iniciar Campanha")
         print("2 - Ver Inventário de Cartas")
         print("3 - Ver Painel de Progresso dos Heróis")
-        print("4 - Acessar Loja de Cartas")
-        print("5 - Sair")
+        print("4 - Ver Mapa da Campanha")
+        print("5 - Acessar Loja de Cartas")
+        print("6 - Sair")
 
         escolha = input("\nEscolha uma opção: ")
 
@@ -48,9 +48,8 @@ def menu_principal():
             print(f"🔸 XP: {xp}")
             print(f"📦 Cartas desbloqueadas: {len(cartas)}")
 
-            # ✅ Usa o sistema correto de deck personalizado
             deck = criar_deck_personalizado(nome)
-            print(f"🧪 Deck gerado: {[c.nome for c in deck]}")  # ✅ Debug útil
+            print(f"🧪 Deck gerado: {[c.nome for c in deck]}")
 
             jogar_campanha(heroi, deck)
 
@@ -68,11 +67,17 @@ def menu_principal():
 
         elif escolha == "4":
             if heroi:
+                exibir_progresso_fases(heroi["nome"])
+            else:
+                print("❌ Selecione um herói primeiro para visualizar o mapa.")
+
+        elif escolha == "5":
+            if heroi:
                 abrir_loja(heroi["nome"])
             else:
                 print("❌ Selecione um herói primeiro para acessar a loja.")
 
-        elif escolha == "5":
+        elif escolha == "6":
             print("\n👋 Saindo do jogo...")
             break
 

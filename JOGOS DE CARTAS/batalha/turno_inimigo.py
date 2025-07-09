@@ -1,4 +1,3 @@
-# batalha/turno_inimigo.py
 from executar_habilidade import executar_habilidade
 from batalha.habilidade_heroi import usar_habilidade_heroi
 from interface_terminal import exibir_campo
@@ -11,26 +10,30 @@ def turno_inimigo(bot, jogador):
 
     exibir_campo(bot, jogador)
 
-    # 🔹 Ordena mão para invocar as melhores cartas (com maior soma ATK + DEF)
+    # 🔹 Ordena mão por poder (ATK + DEF)
     bot.mao.sort(key=lambda c: c.ataque + c.defesa, reverse=True)
-    for carta_idx, carta in enumerate(bot.mao[:]):
+
+    # 🔹 Tenta invocar cartas se tiver mana suficiente
+    for carta in bot.mao[:]:
+        if bot.mana < carta.custo_mana:
+            continue
         for slot in range(5):
             if not bot.campo[slot]:
                 sucesso = bot.invocar_carta(bot.mao.index(carta), slot)
                 if sucesso:
-                    break
+                    break  # Sai do loop de slots se invocou
 
-    # 🔹 Usa habilidades das cartas no campo (se tiver mana)
+    # 🔹 Usa habilidades das cartas em campo (se possível)
     for carta in bot.campo:
         if carta and not carta.habilidade_usada and bot.mana >= carta.custo_mana:
             executar_habilidade(carta.id, carta, bot, jogador)
             carta.habilidade_usada = True
             bot.mana -= carta.custo_mana
 
-    # 🔹 Usa habilidade especial do herói se possível
+    # 🔹 Usa habilidade especial do herói
     usar_habilidade_heroi(bot, jogador)
 
-    # 🔹 Realiza ataques
+    # 🔹 Ataca
     for idx, atacante in enumerate(bot.campo):
         if atacante:
             alvos = [(i, c) for i, c in enumerate(jogador.campo) if c]
@@ -45,5 +48,5 @@ def turno_inimigo(bot, jogador):
                 jogador.vida -= atacante.ataque
                 print(f"🤖 Ataque direto! {jogador.nome} perdeu {atacante.ataque} de vida!")
 
-    # 🔹 Exibe resultado final do turno
+    # 🔹 Exibe o estado final do campo
     exibir_campo(bot, jogador)

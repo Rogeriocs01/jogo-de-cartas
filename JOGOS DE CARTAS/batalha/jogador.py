@@ -1,3 +1,4 @@
+# batalha/jogador.py
 import random
 
 class Jogador:
@@ -15,7 +16,7 @@ class Jogador:
         self.campo = [None] * 5
 
         self.habilidade_usada = False
-        self.habilidade_heroi_usada = False  # ✅ Corrigido aqui
+        self.habilidade_heroi_usada = False
 
     def comprar_carta(self):
         if self.deck:
@@ -50,11 +51,11 @@ class Jogador:
     def restaurar_mana(self):
         self.mana = 3
         self.habilidade_usada = False
-        self.habilidade_heroi_usada = False  # ✅ Resetar aqui também
+        self.habilidade_heroi_usada = False
 
     def resetar_habilidades(self):
         self.habilidade_usada = False
-        self.habilidade_heroi_usada = False  # ✅ Resetar aqui também
+        self.habilidade_heroi_usada = False
 
     def cartas_em_campo(self):
         return [c for c in self.campo if c is not None]

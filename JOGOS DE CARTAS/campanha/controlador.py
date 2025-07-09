@@ -1,5 +1,3 @@
-# campanha/controlador.py
-
 from card_repository import get_carta_by_id
 from campanha.progresso import ganhar_xp
 from campanha.fases import escolher_fase
@@ -7,8 +5,8 @@ from campanha.inimigos import get_personagem_info
 from campanha.recompensas_por_fase import verificar_recompensa
 from recompensas_cartas import recompensar_vitoria
 from inventario_jogador import mostrar_inventario
+from progresso_heroi import carregar_progresso, salvar_progresso  # ✅ Importado para fase
 
-# ✅ Importações corretas e definitivas
 from batalha.motor import batalha
 from batalha.jogador import Jogador
 
@@ -16,7 +14,10 @@ def jogar_campanha(heroi_dict, deck):
     nome_personagem = heroi_dict["nome"]
     info_jogador = get_personagem_info(nome_personagem)
 
-    fase_atual = 1
+    progresso = carregar_progresso()
+    dados_heroi = progresso.get(nome_personagem, {})
+    fase_atual = dados_heroi.get("fase", 1)
+
     while fase_atual <= 60:
         fase_info = escolher_fase(fase_atual)
         bot_info = get_personagem_info(fase_info["nome"])
@@ -40,7 +41,6 @@ def jogar_campanha(heroi_dict, deck):
         )
 
         player.deck = deck
-
         bot.deck = [get_carta_by_id(f"Carta_{i}") for i in range(1, 11) if get_carta_by_id(f"Carta_{i}") is not None]
 
         batalha(player, bot)
@@ -51,6 +51,14 @@ def jogar_campanha(heroi_dict, deck):
             recompensar_vitoria(player.nome)
             verificar_recompensa(fase_atual, player.nome)
             mostrar_inventario(player.nome)
+
+            # ✅ Atualiza fase no progresso
+            progresso = carregar_progresso()
+            if nome_personagem not in progresso:
+                progresso[nome_personagem] = {}
+            progresso[nome_personagem]["fase"] = fase_atual + 1
+            salvar_progresso(progresso)
+
             fase_atual += 1
         else:
             print("\n💀 Você foi derrotado. Retorne ao menu para tentar novamente.")

@@ -1,7 +1,7 @@
 # loja.py
 
 import random
-from progresso_heroi import remover_moedas, adicionar_moedas
+from progresso_heroi import remover_moedas, adicionar_moedas, carregar_progresso
 from inventario_jogador import adicionar_carta
 
 cartas_disponiveis = [
@@ -13,22 +13,30 @@ cartas_disponiveis = [
 ]
 
 def abrir_loja(nome_heroi):
+    progresso = carregar_progresso().get(nome_heroi, {})
+    moedas = progresso.get("moedas", 0)
+
     while True:
-        print(f"\n=== LOJA DE CARTAS — {nome_heroi} ===")
+        print(f"\n💰 Moedas disponíveis: {moedas}")
+        print(f"=== 🛒 LOJA DE CARTAS — {nome_heroi} ===")
         print("1 - Comprar carta específica")
         print("2 - Comprar baú de cartas aleatórias (3 cartas por 60 moedas)")
         print("3 - Comprar moedas com dinheiro real [🔒 Em breve]")
         print("0 - Voltar ao menu")
+        print("-" * 40)
+
         opcao = input("Escolha uma opção: ")
 
         if opcao == "1":
-            print("\n🛒 Cartas disponíveis:")
+            print("\n🃏 Cartas disponíveis para compra:")
             for i, carta in enumerate(cartas_disponiveis, start=1):
                 print(f"{i} - {carta['id']} ({carta['preco']} moedas)")
+
             escolha = input("Digite o número da carta desejada: ")
             if not escolha.isdigit() or not (1 <= int(escolha) <= len(cartas_disponiveis)):
                 print("❌ Escolha inválida.")
                 continue
+
             carta = cartas_disponiveis[int(escolha) - 1]
             if remover_moedas(nome_heroi, carta["preco"]):
                 adicionar_carta(carta["id"], nome_heroi)
@@ -39,7 +47,7 @@ def abrir_loja(nome_heroi):
         elif opcao == "2":
             preco_bau = 60
             if remover_moedas(nome_heroi, preco_bau):
-                print("🎁 Abrindo baú...")
+                print("\n🎁 Abrindo baú de 3 cartas aleatórias...")
                 for _ in range(3):
                     drop = random.choice(cartas_disponiveis)
                     adicionar_carta(drop["id"], nome_heroi)
@@ -48,13 +56,17 @@ def abrir_loja(nome_heroi):
                 print("❌ Moedas insuficientes para o baú.")
 
         elif opcao == "3":
-            print("💰 Integração com compras reais ainda não disponível.")
+            print("\n💰 Integração com compras reais ainda não disponível.")
             print("🔒 Em breve será possível comprar moedas com PIX, cartão ou boleto.")
-            # TODO: Integrar API de pagamento aqui futuramente
-            # exemplo: integracao_pagamento.comprar_moedas(nome_heroi, quantidade)
+            # TODO: Integração futura com API de pagamentos
 
         elif opcao == "0":
+            print("⬅️ Retornando ao menu principal...")
             break
 
         else:
             print("❌ Opção inválida.")
+
+        # Atualiza o saldo após cada operação
+        progresso = carregar_progresso().get(nome_heroi, {})
+        moedas = progresso.get("moedas", 0)

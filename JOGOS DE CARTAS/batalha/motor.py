@@ -1,15 +1,16 @@
-# batalha/motor.py
 from batalha.turno_jogador import turno_jogador
 from batalha.turno_inimigo import turno_inimigo
 from dados.status_heroi import exibir_status_heroi
 
-
 def batalha(jogador, bot):
-    # 🔹 Ambos compram 5 cartas iniciais
+    # 🔹 Ambos compram até 5 cartas iniciais (se tiverem no deck)
     for _ in range(5):
-        jogador.comprar_carta()
-        bot.comprar_carta()
+        if jogador.deck:
+            jogador.comprar_carta()
+        if bot.deck:
+            bot.comprar_carta()
 
+    # 🔁 Loop principal da batalha
     while jogador.vida > 0 and bot.vida > 0:
         turno_jogador(jogador, bot)
         if bot.vida <= 0:

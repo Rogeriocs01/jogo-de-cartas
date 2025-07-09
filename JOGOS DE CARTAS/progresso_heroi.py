@@ -33,13 +33,12 @@ def inicializar_heroi(nome):
         progresso[nome] = {
             "xp": 0,
             "nivel": 1,
-            "moedas": 0
+            "moedas": 0  # ✅ moedas adicionadas no início
         }
         salvar_progresso(progresso)
-    else:
-        if "moedas" not in progresso[nome]:
-            progresso[nome]["moedas"] = 0
-            salvar_progresso(progresso)
+    elif "moedas" not in progresso[nome]:
+        progresso[nome]["moedas"] = 0
+        salvar_progresso(progresso)
     return progresso[nome]
 
 def ganhar_xp(nome, quantidade):
@@ -50,7 +49,7 @@ def ganhar_xp(nome, quantidade):
 
     heroi = progresso[nome]
     heroi["xp"] += quantidade
-    heroi["moedas"] += quantidade // 10
+    heroi["moedas"] += quantidade // 10  # ✅ Ganha moedas com XP
 
     nivel_atual = heroi["nivel"]
     while nivel_atual < 10 and heroi["xp"] >= XP_POR_NIVEL.get(nivel_atual + 1, float("inf")):
