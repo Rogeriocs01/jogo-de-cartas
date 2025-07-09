@@ -39,7 +39,8 @@ def jogar_campanha(heroi_dict, deck):
             is_bot=True
         )
 
-        player.deck = [get_carta_by_id(card) for card in deck if get_carta_by_id(card) is not None]
+        player.deck = deck
+
         bot.deck = [get_carta_by_id(f"Carta_{i}") for i in range(1, 11) if get_carta_by_id(f"Carta_{i}") is not None]
 
         batalha(player, bot)

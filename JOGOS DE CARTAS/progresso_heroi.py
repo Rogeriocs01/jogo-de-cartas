@@ -1,4 +1,3 @@
-# progresso_heroi.py
 import json
 import os
 
@@ -20,12 +19,12 @@ XP_POR_NIVEL = {
 
 def carregar_progresso():
     if os.path.exists(CAMINHO_SALVAMENTO):
-        with open(CAMINHO_SALVAMENTO, "r") as f:
+        with open(CAMINHO_SALVAMENTO, "r", encoding="utf-8") as f:
             return json.load(f)
     return {}
 
 def salvar_progresso(dados):
-    with open(CAMINHO_SALVAMENTO, "w") as f:
+    with open(CAMINHO_SALVAMENTO, "w", encoding="utf-8") as f:
         json.dump(dados, f, indent=4)
 
 def inicializar_heroi(nome):
@@ -38,7 +37,6 @@ def inicializar_heroi(nome):
         }
         salvar_progresso(progresso)
     else:
-        # Adiciona moedas se herói é antigo e ainda não tem
         if "moedas" not in progresso[nome]:
             progresso[nome]["moedas"] = 0
             salvar_progresso(progresso)
@@ -46,10 +44,13 @@ def inicializar_heroi(nome):
 
 def ganhar_xp(nome, quantidade):
     progresso = carregar_progresso()
-    heroi = progresso.get(nome, {"xp": 0, "nivel": 1, "moedas": 0})
+    if nome not in progresso:
+        inicializar_heroi(nome)
+        progresso = carregar_progresso()
 
+    heroi = progresso[nome]
     heroi["xp"] += quantidade
-    heroi["moedas"] += quantidade // 10  # Exemplo: 100 XP → 10 moedas
+    heroi["moedas"] += quantidade // 10
 
     nivel_atual = heroi["nivel"]
     while nivel_atual < 10 and heroi["xp"] >= XP_POR_NIVEL.get(nivel_atual + 1, float("inf")):
@@ -76,11 +77,10 @@ def get_bonus_da_habilidade(nome):
 
 def adicionar_moedas(nome, valor):
     progresso = carregar_progresso()
-    heroi = progresso.get(nome)
-    if not heroi:
-        heroi = inicializar_heroi(nome)
-    heroi["moedas"] += valor
-    progresso[nome] = heroi
+    if nome not in progresso:
+        inicializar_heroi(nome)
+        progresso = carregar_progresso()
+    progresso[nome]["moedas"] += valor
     salvar_progresso(progresso)
 
 def remover_moedas(nome, valor):

@@ -1,16 +1,18 @@
+# menu_inicial.py
+
 import random
 from campanha.controlador import jogar_campanha
 from inventario_jogador import carregar_inventario
 from progresso_heroi import carregar_progresso
 from personagens_data import personagens
-from card_repository import get_carta_by_id
 from dados.painel_progresso import exibir_painel_progresso
 from loja import abrir_loja
+from deck_personalizado import criar_deck_personalizado  # ✅ Correto
 
 heroi = None  # ✅ Variável global para reuso na loja
 
 def menu_principal():
-    global heroi
+    global heroi  # ✅ Para manter o herói selecionado entre as opções
 
     while True:
         print("\n=== MENU PRINCIPAL ===")
@@ -46,18 +48,9 @@ def menu_principal():
             print(f"🔸 XP: {xp}")
             print(f"📦 Cartas desbloqueadas: {len(cartas)}")
 
-            # 🔧 Montar deck
-            if nome == "Deus do Debug":
-                deck = [get_carta_by_id(f"Carta_Debug_{i}") for i in range(1, 11)]
-            else:
-                deck = []
-                while len(deck) < 10:
-                    carta = get_carta_by_id(f"Carta_{random.randint(1, 80)}")
-                    if carta:
-                        deck.append(carta)
-
-            # 💬 Debug opcional
-            print("🧪 Deck gerado:", [carta.nome for carta in deck])
+            # ✅ Usa o sistema correto de deck personalizado
+            deck = criar_deck_personalizado(nome)
+            print(f"🧪 Deck gerado: {[c.nome for c in deck]}")  # ✅ Debug útil
 
             jogar_campanha(heroi, deck)
 

@@ -1,48 +1,31 @@
-# recompensas_cartas.py
 import json
 import os
-import random
+from inventario_jogador import carregar_inventario, salvar_inventario
 
-CAMINHO_RECOMPENSAS = "dados/inventario_cartas.json"
-os.makedirs("dados", exist_ok=True)
-
-# Todas as cartas possíveis (nomes ou IDs simplificados)
-TODAS_AS_CARTAS = [f"Carta_{i}" for i in range(1, 101)]
-
-def carregar_inventario():
-    if os.path.exists(CAMINHO_RECOMPENSAS):
-        with open(CAMINHO_RECOMPENSAS, "r") as f:
-            return json.load(f)
-    return {}
-
-def salvar_inventario(dados):
-    with open(CAMINHO_RECOMPENSAS, "w") as f:
-        json.dump(dados, f, indent=4)
-
-def inicializar_inventario(nome_jogador):
+def adicionar_cartas(nome_jogador, novas_cartas):
     inventario = carregar_inventario()
-    if nome_jogador not in inventario:
-        inventario[nome_jogador] = []
-        salvar_inventario(inventario)
-    return inventario[nome_jogador]
 
-def adicionar_cartas(nome_jogador, cartas):
-    inventario = carregar_inventario()
-    jogador_cartas = set(inventario.get(nome_jogador, []))
-    novas_cartas = [c for c in cartas if c not in jogador_cartas]
-    inventario[nome_jogador].extend(novas_cartas)
+    if nome_jogador not in inventario or not isinstance(inventario[nome_jogador], dict):
+        inventario[nome_jogador] = {}
+
+    for carta in novas_cartas:
+        if carta in inventario[nome_jogador]:
+            inventario[nome_jogador][carta] += 1
+        else:
+            inventario[nome_jogador][carta] = 1
+
+    # ✅ Salvando com o inventário atualizado
     salvar_inventario(inventario)
     return novas_cartas
 
-def recompensar_vitoria(nome_jogador, quantidade=2):
-    inventario = set(carregar_inventario().get(nome_jogador, []))
-    elegiveis = list(set(TODAS_AS_CARTAS) - inventario)
-
-    if not elegiveis:
-        print("🎉 Você já desbloqueou todas as cartas!")
-        return []
-
-    recompensas = random.sample(elegiveis, min(quantidade, len(elegiveis)))
+def recompensar_vitoria(nome_jogador):
+    recompensas = gerar_recompensas_aleatorias()
     adicionadas = adicionar_cartas(nome_jogador, recompensas)
-    print(f"🎁 Recompensas recebidas: {', '.join(adicionadas)}")
-    return adicionadas
+    print(f"🎁 Recompensas adicionadas ao inventário de {nome_jogador}:")
+    for carta in adicionadas:
+        print(f" - {carta}")
+
+def gerar_recompensas_aleatorias():
+    import random
+    ids_possiveis = [f"Carta_{i}" for i in range(1, 81)]
+    return random.sample(ids_possiveis, 2)

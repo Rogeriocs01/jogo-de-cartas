@@ -1,10 +1,8 @@
-# inventario_jogador.py
 import json
 import os
 
 CAMINHO_ARQUIVO = "inventario.json"
 
-# Dicionário geral: { "Thorin": { "Carta_01": 2, ... }, "Elora": {...} }
 inventario = {}
 
 def carregar_inventario():
@@ -14,13 +12,14 @@ def carregar_inventario():
             inventario = json.load(f)
     else:
         inventario = {}
+    return inventario  # ✅ Retorna para que outros módulos possam usá-lo
 
-def salvar_inventario():
+def salvar_inventario(inventario_atualizado):
     with open(CAMINHO_ARQUIVO, "w", encoding="utf-8") as f:
-        json.dump(inventario, f, indent=4)
+        json.dump(inventario_atualizado, f, indent=4)
 
 def adicionar_carta(carta_id, nome_heroi):
-    carregar_inventario()
+    inventario = carregar_inventario()
 
     if nome_heroi not in inventario:
         inventario[nome_heroi] = {}
@@ -30,10 +29,10 @@ def adicionar_carta(carta_id, nome_heroi):
     else:
         inventario[nome_heroi][carta_id] = 1
 
-    salvar_inventario()
+    salvar_inventario(inventario)
 
 def mostrar_inventario(nome_heroi):
-    carregar_inventario()
+    inventario = carregar_inventario()
 
     print(f"\n📜 Inventário de Cartas de {nome_heroi}:")
     cartas = inventario.get(nome_heroi, {})

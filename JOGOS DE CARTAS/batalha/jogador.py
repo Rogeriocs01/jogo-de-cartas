@@ -13,7 +13,9 @@ class Jogador:
         self.deck = []
         self.mao = []
         self.campo = [None] * 5
+
         self.habilidade_usada = False
+        self.habilidade_heroi_usada = False  # ✅ Corrigido aqui
 
     def comprar_carta(self):
         if self.deck:
@@ -48,10 +50,11 @@ class Jogador:
     def restaurar_mana(self):
         self.mana = 3
         self.habilidade_usada = False
+        self.habilidade_heroi_usada = False  # ✅ Resetar aqui também
 
     def resetar_habilidades(self):
-        """Reseta o controle de uso de habilidades no início de cada turno."""
         self.habilidade_usada = False
+        self.habilidade_heroi_usada = False  # ✅ Resetar aqui também
 
     def cartas_em_campo(self):
         return [c for c in self.campo if c is not None]
