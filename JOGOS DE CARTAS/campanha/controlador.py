@@ -1,5 +1,3 @@
-# campanha/controlador.py
-
 from card_repository import get_carta_by_id
 from campanha.progresso import ganhar_xp
 from campanha.fases import escolher_fase
@@ -29,6 +27,7 @@ def jogar_campanha(heroi_dict, deck):
         if entrada.lower() == 'm':
             break
 
+        # Cria jogador humano
         player = Jogador(
             nome=info_jogador["nome"],
             terreno_favorito=info_jogador["terreno"],
@@ -36,25 +35,45 @@ def jogar_campanha(heroi_dict, deck):
             custo_habilidade=info_jogador.get("custo_habilidade", 2),
         )
 
+        # Cria o inimigo (bot)
         bot = Jogador(
             nome=bot_info["nome"],
             terreno_favorito=bot_info["terreno"],
             is_bot=True
         )
 
-        player.deck = deck
-        bot.deck = [get_carta_by_id(f"Carta_{i}") for i in range(1, 11) if get_carta_by_id(f"Carta_{i}") is not None]
+        # 🔧 Define deck e vida do bot de acordo com dificuldade
+        dificuldade = fase_info["dificuldade"]
 
+        if dificuldade == "Fácil":
+            qtd_cartas = 10
+            bot.vida = 20
+        elif dificuldade == "Médio":
+            qtd_cartas = 15
+            bot.vida = 25
+        else:
+            qtd_cartas = 25
+            bot.vida = 40 if dificuldade == "Chefe" else 30
+
+        # Define os decks
+        player.deck = deck
+        bot.deck = [
+            get_carta_by_id(f"Carta_{i}")
+            for i in range(1, qtd_cartas + 1)
+            if get_carta_by_id(f"Carta_{i}") is not None
+        ]
+
+        # Executa a batalha
         batalha(player, bot)
 
         if player.vida > 0:
             print(f"\n🏆 Você venceu a fase {fase_atual}!")
             ganhar_xp(player.nome, 100)
-            recompensar_vitoria()  # ✅ Sem argumento
+            recompensar_vitoria()
             verificar_recompensa(fase_atual, player.nome)
-            mostrar_inventario()  # ✅ Inventário global
+            mostrar_inventario()
 
-            # ✅ Atualiza fase no progresso do herói
+            # Atualiza fase do progresso
             progresso = carregar_progresso()
             if nome_personagem not in progresso:
                 progresso[nome_personagem] = {}

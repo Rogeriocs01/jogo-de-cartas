@@ -5,9 +5,9 @@ from progresso_heroi import carregar_progresso
 from personagens_data import personagens
 from dados.painel_progresso import exibir_painel_progresso
 from loja import abrir_loja
-from deck_personalizado import criar_deck_personalizado
 from campanha.progresso_fases import exibir_progresso_fases
 from jogador_global import exibir_status_jogador
+from deck_manager import montar_deck_manual, criar_deck_automatico
 
 heroi = None  # ✅ Mantém o herói selecionado durante o uso do menu
 
@@ -46,9 +46,18 @@ def menu_principal():
             print(f"🔹 Nível: {nivel}")
             print(f"🔸 XP: {xp}")
 
-            deck = criar_deck_personalizado(nome)
-            print(f"🧪 Deck gerado: {[c.nome for c in deck]}")
+            # 🔽 NOVO: Escolha entre montar deck ou usar automático
+            print("\n💼 Deseja montar seu deck ou usar o automático?")
+            print("1 - Montar manualmente com cartas do inventário")
+            print("2 - Usar deck automático do personagem")
+            opcao_deck = input("Escolha (1 ou 2): ")
 
+            if opcao_deck == "1":
+                deck = montar_deck_manual(nome)
+            else:
+                deck = criar_deck_automatico(nome)
+
+            print(f"🧪 Deck carregado com {len(deck)} cartas.")
             jogar_campanha(heroi, deck)
 
         elif escolha == "2":
@@ -64,7 +73,7 @@ def menu_principal():
                 print("❌ Selecione um herói primeiro para visualizar o mapa.")
 
         elif escolha == "5":
-            abrir_loja()  # ✅ Loja agora é global, não depende do herói
+            abrir_loja()
 
         elif escolha == "6":
             exibir_status_jogador()

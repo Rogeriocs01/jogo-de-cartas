@@ -19,6 +19,11 @@ class Jogador:
         self.habilidade_heroi_usada = False
 
     def comprar_carta(self):
+        if len(self.mao) >= 5:
+            if not self.is_bot:
+                print("🛑 Sua mão está cheia! Você não pode comprar mais cartas.")
+            return
+
         if self.deck:
             carta = self.deck.pop(0)
             self.mao.append(carta)
@@ -62,6 +67,9 @@ class Jogador:
 
     def possui_cartas_em_campo(self):
         return any(c is not None for c in self.campo)
+
+    def limpar_mao(self):
+        self.mao = []
 
     def __str__(self):
         return f"{self.nome} — ❤️ {self.vida} | 🔷 Mana: {self.mana}"
