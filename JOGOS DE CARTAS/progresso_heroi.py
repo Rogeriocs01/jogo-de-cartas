@@ -1,3 +1,4 @@
+# progresso_heroi.py
 import json
 import os
 
@@ -32,12 +33,8 @@ def inicializar_heroi(nome):
     if nome not in progresso:
         progresso[nome] = {
             "xp": 0,
-            "nivel": 1,
-            "moedas": 0  # ✅ moedas adicionadas no início
+            "nivel": 1
         }
-        salvar_progresso(progresso)
-    elif "moedas" not in progresso[nome]:
-        progresso[nome]["moedas"] = 0
         salvar_progresso(progresso)
     return progresso[nome]
 
@@ -49,7 +46,6 @@ def ganhar_xp(nome, quantidade):
 
     heroi = progresso[nome]
     heroi["xp"] += quantidade
-    heroi["moedas"] += quantidade // 10  # ✅ Ganha moedas com XP
 
     nivel_atual = heroi["nivel"]
     while nivel_atual < 10 and heroi["xp"] >= XP_POR_NIVEL.get(nivel_atual + 1, float("inf")):
@@ -73,21 +69,3 @@ def get_bonus_da_habilidade(nome):
     elif nivel >= 2:
         return 1
     return 0
-
-def adicionar_moedas(nome, valor):
-    progresso = carregar_progresso()
-    if nome not in progresso:
-        inicializar_heroi(nome)
-        progresso = carregar_progresso()
-    progresso[nome]["moedas"] += valor
-    salvar_progresso(progresso)
-
-def remover_moedas(nome, valor):
-    progresso = carregar_progresso()
-    heroi = progresso.get(nome)
-    if not heroi or heroi.get("moedas", 0) < valor:
-        return False
-    heroi["moedas"] -= valor
-    progresso[nome] = heroi
-    salvar_progresso(progresso)
-    return True

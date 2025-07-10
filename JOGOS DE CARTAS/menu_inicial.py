@@ -1,26 +1,28 @@
 import random
 from campanha.controlador import jogar_campanha
-from inventario_jogador import carregar_inventario
+from inventario_jogador import mostrar_inventario
 from progresso_heroi import carregar_progresso
 from personagens_data import personagens
 from dados.painel_progresso import exibir_painel_progresso
 from loja import abrir_loja
 from deck_personalizado import criar_deck_personalizado
 from campanha.progresso_fases import exibir_progresso_fases
+from jogador_global import exibir_status_jogador
 
-heroi = None  # ✅ Variável global para manter herói selecionado
+heroi = None  # ✅ Mantém o herói selecionado durante o uso do menu
 
 def menu_principal():
     global heroi
 
     while True:
         print("\n=== MENU PRINCIPAL ===")
-        print("1 - Iniciar Campanha")
-        print("2 - Ver Inventário de Cartas")
+        print("1 - Selecionar Herói e Iniciar Campanha")
+        print("2 - Ver Inventário de Cartas (Global)")
         print("3 - Ver Painel de Progresso dos Heróis")
         print("4 - Ver Mapa da Campanha")
         print("5 - Acessar Loja de Cartas")
-        print("6 - Sair")
+        print("6 - Ver Status do Jogador")
+        print("7 - Sair")
 
         escolha = input("\nEscolha uma opção: ")
 
@@ -37,16 +39,12 @@ def menu_principal():
             print(f"\n✅ Você escolheu: {nome}!")
 
             progresso = carregar_progresso()
-            inventario = carregar_inventario() or {}
-
             nivel = progresso.get(nome, {}).get("nivel", 1)
             xp = progresso.get(nome, {}).get("xp", 0)
-            cartas = inventario.get(nome, {})
 
             print(f"\n📊 Progresso de {nome}:")
             print(f"🔹 Nível: {nivel}")
             print(f"🔸 XP: {xp}")
-            print(f"📦 Cartas desbloqueadas: {len(cartas)}")
 
             deck = criar_deck_personalizado(nome)
             print(f"🧪 Deck gerado: {[c.nome for c in deck]}")
@@ -54,13 +52,7 @@ def menu_principal():
             jogar_campanha(heroi, deck)
 
         elif escolha == "2":
-            inventario = carregar_inventario()
-            if not inventario:
-                print("\n📭 Inventário vazio.")
-            for heroi_nome, cartas in inventario.items():
-                print(f"\n🧙‍♂️ {heroi_nome}: {len(cartas)} cartas desbloqueadas")
-                for carta_id, qtd in cartas.items():
-                    print(f" - {carta_id} x{qtd}")
+            mostrar_inventario()
 
         elif escolha == "3":
             exibir_painel_progresso()
@@ -72,12 +64,12 @@ def menu_principal():
                 print("❌ Selecione um herói primeiro para visualizar o mapa.")
 
         elif escolha == "5":
-            if heroi:
-                abrir_loja(heroi["nome"])
-            else:
-                print("❌ Selecione um herói primeiro para acessar a loja.")
+            abrir_loja()  # ✅ Loja agora é global, não depende do herói
 
         elif escolha == "6":
+            exibir_status_jogador()
+
+        elif escolha == "7":
             print("\n👋 Saindo do jogo...")
             break
 

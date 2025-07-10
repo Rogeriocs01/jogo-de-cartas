@@ -1,3 +1,5 @@
+# campanha/controlador.py
+
 from card_repository import get_carta_by_id
 from campanha.progresso import ganhar_xp
 from campanha.fases import escolher_fase
@@ -5,7 +7,7 @@ from campanha.inimigos import get_personagem_info
 from campanha.recompensas_por_fase import verificar_recompensa
 from recompensas_cartas import recompensar_vitoria
 from inventario_jogador import mostrar_inventario
-from progresso_heroi import carregar_progresso, salvar_progresso  # ✅ Importado para fase
+from progresso_heroi import carregar_progresso, salvar_progresso
 
 from batalha.motor import batalha
 from batalha.jogador import Jogador
@@ -48,11 +50,11 @@ def jogar_campanha(heroi_dict, deck):
         if player.vida > 0:
             print(f"\n🏆 Você venceu a fase {fase_atual}!")
             ganhar_xp(player.nome, 100)
-            recompensar_vitoria(player.nome)
+            recompensar_vitoria()  # ✅ Sem argumento
             verificar_recompensa(fase_atual, player.nome)
-            mostrar_inventario(player.nome)
+            mostrar_inventario()  # ✅ Inventário global
 
-            # ✅ Atualiza fase no progresso
+            # ✅ Atualiza fase no progresso do herói
             progresso = carregar_progresso()
             if nome_personagem not in progresso:
                 progresso[nome_personagem] = {}
