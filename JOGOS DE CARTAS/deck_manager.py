@@ -1,51 +1,13 @@
-import json
-import os
 import random
 from card_repository import get_carta_by_id
 from inventario_jogador import carregar_inventario
 from personagens_data import personagens
-from progresso_heroi import carregar_progresso
+from progresso_heroi import carregar_progresso, get_tamanho_maximo_deck
 
-CAMINHO_DECKS = "decks_salvos"
-os.makedirs(CAMINHO_DECKS, exist_ok=True)
-
-LIMITE_POR_CARTA = 3
-
-# Tamanho máximo de deck por nível do herói
-TAMANHO_DECK_POR_NIVEL = {
-    1: 10,
-    2: 12,
-    3: 14,
-    4: 16,
-    5: 18,
-    6: 20,
-    7: 22,
-    8: 23,
-    9: 24,
-    10: 25,
-}
-
-def get_tamanho_deck(nome_heroi):
-    progresso = carregar_progresso()
-    nivel = progresso.get(nome_heroi, {}).get("nivel", 1)
-    return TAMANHO_DECK_POR_NIVEL.get(nivel, 10)
-
-def salvar_deck(nome_heroi, lista_ids):
-    caminho = os.path.join(CAMINHO_DECKS, f"deck_{nome_heroi}.json")
-    with open(caminho, "w", encoding="utf-8") as f:
-        json.dump(lista_ids, f, indent=4)
-
-def carregar_deck(nome_heroi):
-    caminho = os.path.join(CAMINHO_DECKS, f"deck_{nome_heroi}.json")
-    if os.path.exists(caminho):
-        with open(caminho, "r", encoding="utf-8") as f:
-            lista_ids = json.load(f)
-            return [get_carta_by_id(cid) for cid in lista_ids]
-    return None
-
-def criar_deck_automatico(nome_heroi):
+def criar_deck_automatico(personagem_nome: str):
     """
-    Gera um deck fixo pré-definido para cada herói.
+    Gera um deck automático baseado no personagem.
+    Retorna uma lista de objetos Carta.
     """
     decks = {
         "Thorin, o Bravo": ["Carta_1", "Carta_2", "Carta_3", "Carta_4", "Carta_5"] * 2,
@@ -67,43 +29,55 @@ def criar_deck_automatico(nome_heroi):
         "Deus do Debug": [f"Carta_Debug_{i}" for i in range(1, 10)],
     }
 
-    lista_ids = decks.get(nome_heroi, ["Carta_1", "Carta_2", "Carta_3", "Carta_4", "Carta_5"] * 2)
-    tamanho = get_tamanho_deck(nome_heroi)
+    lista_ids = decks.get(
+        personagem_nome,
+        ["Carta_1", "Carta_2", "Carta_3", "Carta_4", "Carta_5", "Carta_6", "Carta_7", "Carta_8", "Carta_9", "Carta_10"]
+    )
 
-    random.shuffle(lista_ids)
-    lista_ids = lista_ids[:tamanho]
+    deck = []
+    for carta_id in lista_ids:
+        try:
+            carta = get_carta_by_id(carta_id)
+            deck.append(carta)
+        except ValueError as e:
+            print(f"[Aviso]: {e}")
 
-    salvar_deck(nome_heroi, lista_ids)
-    return [get_carta_by_id(cid) for cid in lista_ids]
+    random.shuffle(deck)
+    return deck
 
-def montar_deck_manual(nome_heroi):
+
+def montar_deck_manual(nome_heroi, limite_por_carta=3):
     """
-    Permite montar um deck com base no inventário global.
-    Salva o deck montado e retorna objetos Carta.
+    Permite ao jogador montar manualmente seu deck com cartas do inventário.
+    O tamanho máximo do deck depende do nível do herói.
     """
-    tamanho_max = get_tamanho_deck(nome_heroi)
+    progresso = carregar_progresso()
+    nivel = progresso.get(nome_heroi, {}).get("nivel", 1)
+    tamanho_deck = get_tamanho_maximo_deck(nivel)
+
     inventario = carregar_inventario()
-
     if not inventario:
-        print("❌ Seu inventário está vazio.")
+        print("❌ Você não possui cartas no inventário.")
         return []
 
     deck_ids = []
+    print(f"\n🔧 Montando deck para {nome_heroi} (Nível {nivel}) — Limite: {tamanho_deck} cartas, máx {limite_por_carta} por tipo.")
 
-    while len(deck_ids) < tamanho_max:
-        print(f"\n🃏 Deck atual ({len(deck_ids)}/{tamanho_max}): {deck_ids}")
-        print("📦 Inventário:")
+    while len(deck_ids) < tamanho_deck:
+        print(f"\n🃏 Cartas no Deck ({len(deck_ids)}/{tamanho_deck}): {deck_ids}")
+        print("📦 Inventário disponível:")
+
         cartas_disponiveis = [(cid, qtd) for cid, qtd in inventario.items()
-                              if deck_ids.count(cid) < min(qtd, LIMITE_POR_CARTA)]
+                              if deck_ids.count(cid) < min(qtd, limite_por_carta)]
 
         if not cartas_disponiveis:
-            print("⚠️ Não há mais cartas disponíveis para adicionar.")
+            print("✅ Não há mais cartas elegíveis para adicionar.")
             break
 
         for i, (cid, qtd) in enumerate(cartas_disponiveis, start=1):
             print(f"{i}. {cid} (x{qtd})")
 
-        escolha = input("Digite o número da carta (ENTER para finalizar): ")
+        escolha = input("Digite o número da carta para adicionar (ENTER para finalizar): ")
         if escolha.strip() == "":
             break
 
@@ -112,11 +86,19 @@ def montar_deck_manual(nome_heroi):
             if 0 <= idx < len(cartas_disponiveis):
                 carta_id, _ = cartas_disponiveis[idx]
                 deck_ids.append(carta_id)
-                print(f"✅ {carta_id} adicionada.")
+                print(f"✅ {carta_id} adicionada ao deck.")
             else:
-                print("❌ Escolha fora do intervalo.")
+                print("❌ Índice fora do intervalo.")
         except ValueError:
             print("❌ Entrada inválida.")
 
-    salvar_deck(nome_heroi, deck_ids)
-    return [get_carta_by_id(cid) for cid in deck_ids]
+    # Converte IDs em objetos Carta
+    deck_final = []
+    for cid in deck_ids:
+        try:
+            deck_final.append(get_carta_by_id(cid))
+        except ValueError as e:
+            print(f"[Aviso]: {e}")
+
+    print(f"\n🧪 Deck finalizado com {len(deck_final)} cartas.")
+    return deck_final

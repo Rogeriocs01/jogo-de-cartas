@@ -1,3 +1,4 @@
+#menu_inicial.py
 import random
 from campanha.controlador import jogar_campanha
 from inventario_jogador import mostrar_inventario
@@ -7,7 +8,7 @@ from dados.painel_progresso import exibir_painel_progresso
 from loja import abrir_loja
 from campanha.progresso_fases import exibir_progresso_fases
 from jogador_global import exibir_status_jogador
-from deck_manager import montar_deck_manual, criar_deck_automatico
+from deck_manager import criar_deck_automatico, montar_deck_manual, salvar_deck_personalizado, carregar_deck_personalizado
 
 heroi = None  # ✅ Mantém o herói selecionado durante o uso do menu
 
@@ -16,13 +17,15 @@ def menu_principal():
 
     while True:
         print("\n=== MENU PRINCIPAL ===")
-        print("1 - Selecionar Herói e Iniciar Campanha")
-        print("2 - Ver Inventário de Cartas (Global)")
-        print("3 - Ver Painel de Progresso dos Heróis")
-        print("4 - Ver Mapa da Campanha")
-        print("5 - Acessar Loja de Cartas")
-        print("6 - Ver Status do Jogador")
-        print("7 - Sair")
+        print("1 - Selecionar Herói")
+        print("2 - Editar Deck Manualmente")
+        print("3 - Iniciar Campanha com Deck do Herói")
+        print("4 - Ver Inventário de Cartas (Global)")
+        print("5 - Ver Painel de Progresso dos Heróis")
+        print("6 - Ver Mapa da Campanha")
+        print("7 - Acessar Loja de Cartas")
+        print("8 - Ver Status do Jogador")
+        print("9 - Sair")
 
         escolha = input("\nEscolha uma opção: ")
 
@@ -46,39 +49,54 @@ def menu_principal():
             print(f"🔹 Nível: {nivel}")
             print(f"🔸 XP: {xp}")
 
-            # 🔽 NOVO: Escolha entre montar deck ou usar automático
-            print("\n💼 Deseja montar seu deck ou usar o automático?")
-            print("1 - Montar manualmente com cartas do inventário")
-            print("2 - Usar deck automático do personagem")
-            opcao_deck = input("Escolha (1 ou 2): ")
+        elif escolha == "2":
+            if heroi:
+                nome = heroi["nome"]
+                print(f"\n✍️ Editando deck de: {nome}")
+                novo_deck = montar_deck_manual(nome)
+                salvar_deck_personalizado(nome, novo_deck)
+                print("💾 Deck salvo com sucesso!")
+            else:
+                print("❌ Selecione um herói primeiro na opção 1.")
 
-            if opcao_deck == "1":
-                deck = montar_deck_manual(nome)
+        elif escolha == "3":
+            if not heroi:
+                print("❌ Selecione um herói primeiro na opção 1.")
+                continue
+
+            nome = heroi["nome"]
+            print("\n🔧 Como deseja usar seu deck?")
+            print("1 - Usar deck automático baseado no personagem")
+            print("2 - Usar deck salvo manualmente")
+            escolha_deck = input("Escolha uma opção: ")
+
+            if escolha_deck == "2":
+                deck = carregar_deck_personalizado(nome)
             else:
                 deck = criar_deck_automatico(nome)
 
-            print(f"🧪 Deck carregado com {len(deck)} cartas.")
+            print(f"🧪 Deck final: {[c.nome for c in deck]}")
             jogar_campanha(heroi, deck)
 
-        elif escolha == "2":
+        elif escolha == "4":
             mostrar_inventario()
 
-        elif escolha == "3":
+        elif escolha == "5":
             exibir_painel_progresso()
 
-        elif escolha == "4":
+        elif escolha == "6":
             if heroi:
                 exibir_progresso_fases(heroi["nome"])
             else:
                 print("❌ Selecione um herói primeiro para visualizar o mapa.")
 
-        elif escolha == "5":
+        elif escolha == "7":
             abrir_loja()
 
-        elif escolha == "6":
+        elif escolha == "8":
             exibir_status_jogador()
 
-        elif escolha == "7":
+        elif escolha == "9":
             print("\n👋 Saindo do jogo...")
             break
 
