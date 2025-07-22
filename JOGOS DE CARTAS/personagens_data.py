@@ -1,5 +1,3 @@
-# personagens_data.py
-
 personagens = [
     {"nome": "Thorin", "terreno": "Lava", "habilidade_especial": "buff_aliados", "custo_habilidade": 2},
     {"nome": "Elora", "terreno": "Floresta", "habilidade_especial": "comprar_cartas", "custo_habilidade": 3},
@@ -22,8 +20,6 @@ personagens = [
     {"nome": "Kael", "terreno": "Planície", "habilidade_especial": "buff_aliados", "custo_habilidade": 2},
     {"nome": "Sylara", "terreno": "Água", "habilidade_especial": "furto_temporario", "custo_habilidade": 2},
     {"nome": "Eldrin", "terreno": "Floresta", "habilidade_especial": "curar", "custo_habilidade": 2},
-    {"nome": "Deus do Debug", "terreno": "Código Sagrado", "habilidade_especial": None, "custo_habilidade": 0}
+    {"nome": "Deus do Debug", "terreno": "Código Sagrado", "habilidade_especial": None, "custo_habilidade": 0}  # Reservado para testes
 ]
-
-
 

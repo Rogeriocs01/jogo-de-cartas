@@ -1,41 +1,42 @@
-# habilidades_heroi.py
 from progresso_heroi import get_bonus_da_habilidade
 
-def curar_heroi(jogador, quantidade=2):
+def curar_heroi(jogador, inimigo=None):
     bonus = get_bonus_da_habilidade(jogador.nome)
-    total = quantidade + bonus
+    total = 2 + bonus
     jogador.vida += total
     print(f"✨ {jogador.nome} recuperou {total} de vida! Vida atual: {jogador.vida}")
 
-def dano_heroi(inimigo, quantidade=2):
-    bonus = get_bonus_da_habilidade(inimigo.nome)
-    total = quantidade + bonus
+def dano_heroi(jogador, inimigo):
+    bonus = get_bonus_da_habilidade(jogador.nome)
+    total = 2 + bonus
     inimigo.vida -= total
     print(f"🔥 {inimigo.nome} sofreu {total} de dano direto! Vida restante: {inimigo.vida}")
 
-def comprar_cartas(jogador, quantidade=2):
-    bonus = get_bonus_da_habilidade(jogador.nome)
-    total = quantidade + bonus
-    for _ in range(total):
-        jogador.comprar_carta()
-
-def reduzir_custo_mana(jogador):
-    bonus = get_bonus_da_habilidade(jogador.nome)
-    for carta in jogador.mao:
-        carta.custo_mana = max(0, carta.custo_mana - 1 - bonus)
-    print(f"🔷 Custo de mana das cartas da mão reduzido em {1 + bonus}!")
-
-def manipulacao_mana(jogador):
+def comprar_cartas(jogador, inimigo=None):
     bonus = get_bonus_da_habilidade(jogador.nome)
     total = 2 + bonus
-    jogador.mana += total
-    print(f"🔷 {jogador.nome} recuperou {total} de mana adicionais! Mana total: {jogador.mana}")
+    for _ in range(total):
+        jogador.comprar_carta()
+    print(f"📜 {jogador.nome} comprou {total} cartas.")
 
-def reutilizar_habilidade(jogador):
+def reduzir_custo_mana(jogador, inimigo=None):
+    bonus = get_bonus_da_habilidade(jogador.nome)
+    desconto = 1 + bonus
+    for carta in jogador.mao:
+        carta.custo_mana = max(0, carta.custo_mana - desconto)
+    print(f"🔷 {jogador.nome} reduziu o custo de mana das cartas na mão em {desconto}.")
+
+def manipulacao_mana(jogador, inimigo=None):
+    bonus = get_bonus_da_habilidade(jogador.nome)
+    recuperado = 2 + bonus
+    jogador.mana += recuperado
+    print(f"🔷 {jogador.nome} recuperou {recuperado} de mana! Mana total: {jogador.mana}")
+
+def reutilizar_habilidade(jogador, inimigo=None):
     for carta in jogador.campo:
         if carta:
             carta.habilidade_usada = False
-    print("♻️ Todas as habilidades das cartas em campo foram recarregadas!")
+    print(f"♻️ {jogador.nome} recarregou as habilidades de todas as cartas em campo.")
 
 def espionagem(jogador, inimigo):
     print(f"🕵️ {jogador.nome} espionou a mão de {inimigo.nome}:")
@@ -45,17 +46,17 @@ def espionagem(jogador, inimigo):
 def furto_temporario(jogador, inimigo):
     for i, carta in enumerate(inimigo.campo):
         if carta:
-            copia = carta  # Compartilha referência por 1 turno
             for slot in range(5):
                 if not jogador.campo[slot]:
-                    jogador.campo[slot] = copia
+                    jogador.campo[slot] = carta
                     print(f"🎭 {jogador.nome} roubou temporariamente {carta.nome} do inimigo!")
                     return
-    print("⚠️ Não foi possível furtar nenhuma carta.")
+    print("⚠️ Nenhuma carta pôde ser furtada.")
 
+# Mapeamento das habilidades por ID textual
 heroi_habilidades = {
     "curar": curar_heroi,
-    "dano": dano_heroi,
+    "dano_em_area": dano_heroi,
     "comprar_cartas": comprar_cartas,
     "reduzir_custo_mana": reduzir_custo_mana,
     "manipulacao_mana": manipulacao_mana,
@@ -63,3 +64,10 @@ heroi_habilidades = {
     "espionagem": espionagem,
     "furto_temporario": furto_temporario,
 }
+
+def executar_habilidade_heroi(nome_habilidade, jogador, inimigo, campo=None):
+    habilidade = heroi_habilidades.get(nome_habilidade)
+    if habilidade:
+        habilidade(jogador, inimigo)
+    else:
+        print(f"❌ Habilidade {nome_habilidade} não implementada para heróis.")
