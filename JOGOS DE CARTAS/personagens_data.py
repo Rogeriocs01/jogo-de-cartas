@@ -1,4 +1,6 @@
-personagens = [
+# personagens_data.py
+
+herois_disponiveis = [
     {"nome": "Thorin", "terreno": "Lava", "habilidade_especial": "buff_aliados", "custo_habilidade": 2},
     {"nome": "Elora", "terreno": "Floresta", "habilidade_especial": "comprar_cartas", "custo_habilidade": 3},
     {"nome": "Balgor", "terreno": "Terra", "habilidade_especial": "dano_em_area", "custo_habilidade": 3},
@@ -22,4 +24,5 @@ personagens = [
     {"nome": "Eldrin", "terreno": "Floresta", "habilidade_especial": "curar", "custo_habilidade": 2},
     {"nome": "Deus do Debug", "terreno": "Código Sagrado", "habilidade_especial": None, "custo_habilidade": 0}  # Reservado para testes
 ]
+
 

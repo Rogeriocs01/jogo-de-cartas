@@ -1,52 +1,27 @@
-from executar_habilidade import executar_habilidade
-from batalha.habilidade_heroi import usar_habilidade_heroi
-from interface_terminal import exibir_campo
+# batalha/turno_inimigo.py
 
-def turno_inimigo(bot, jogador):
-    print(f"\n🤖 Turno de {bot.nome}")
-    bot.mana = 3
-    bot.resetar_habilidades()
-    bot.comprar_carta()
+from habilidades import habilidades_cartas_unitarias as habilidades
+from utils import pausar
 
-    exibir_campo(bot, jogador)
 
-    # 🔹 Ordena mão por poder (ATK + DEF)
-    bot.mao.sort(key=lambda c: c.ataque + c.defesa, reverse=True)
+def turno_inimigo(inimigo, jogador):
+    print(f"\n🤖 Turno do inimigo: {inimigo.nome}")
 
-    # 🔹 Tenta invocar cartas se tiver mana suficiente
-    for carta in bot.mao[:]:
-        if bot.mana < carta.custo_mana:
-            continue
-        for slot in range(5):
-            if not bot.campo[slot]:
-                sucesso = bot.invocar_carta(bot.mao.index(carta), slot)
-                if sucesso:
-                    break  # Sai do loop de slots se invocou
+    # Invoca cartas da mão automaticamente, se houver espaço
+    for _ in range(5):
+        if any(carta is not None for carta in inimigo.mao):
+            inimigo.invocar_carta()
 
-    # 🔹 Usa habilidades das cartas em campo (se possível)
-    for carta in bot.campo:
-        if carta and not carta.habilidade_usada and bot.mana >= carta.custo_mana:
-            executar_habilidade(carta.id, carta, bot, jogador)
-            carta.habilidade_usada = True
-            bot.mana -= carta.custo_mana
+    # Usa habilidades das cartas em campo automaticamente
+    for idx, carta in enumerate(inimigo.campo):
+        if carta and hasattr(carta, "habilidade") and not getattr(carta, "habilidade_usada", False):
+            if inimigo.mana >= carta.custo_mana:
+                inimigo.mana -= carta.custo_mana
+                habilidades.executar(carta.id, inimigo, jogador, inimigo.campo)
+                carta.habilidade_usada = True
+                print(f"🌀 Inimigo usou a habilidade de {carta.nome}!")
+    
+    # Ataca com as cartas disponíveis
+    inimigo.atacar(jogador)
 
-    # 🔹 Usa habilidade especial do herói
-    usar_habilidade_heroi(bot, jogador)
-
-    # 🔹 Ataca
-    for idx, atacante in enumerate(bot.campo):
-        if atacante:
-            alvos = [(i, c) for i, c in enumerate(jogador.campo) if c]
-            if alvos:
-                alvo_idx, alvo = min(alvos, key=lambda x: x[1].defesa)
-                alvo.defesa -= atacante.ataque
-                print(f"🤖 {atacante.nome} atacou {alvo.nome}! Nova DEF: {alvo.defesa}")
-                if alvo.defesa <= 0:
-                    print(f"💥 {alvo.nome} foi destruída!")
-                    jogador.campo[alvo_idx] = None
-            else:
-                jogador.vida -= atacante.ataque
-                print(f"🤖 Ataque direto! {jogador.nome} perdeu {atacante.ataque} de vida!")
-
-    # 🔹 Exibe o estado final do campo
-    exibir_campo(bot, jogador)
+    pausar()

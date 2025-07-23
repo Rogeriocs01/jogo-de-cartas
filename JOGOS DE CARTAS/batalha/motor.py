@@ -2,31 +2,40 @@
 
 from batalha.turno_jogador import turno_jogador
 from batalha.turno_inimigo import turno_inimigo
-from dados.status_heroi import exibir_status_heroi
+from utils import pausar, limpar_tela
 
-def batalha(jogador, bot):
-    print(f"\n⚔️ Iniciando batalha: {jogador.nome} (HP: {jogador.vida}) vs {bot.nome} (HP: {bot.vida})")
 
-    # 🔹 Ambos compram até 5 cartas iniciais (se tiverem no deck)
-    for _ in range(5):
-        if jogador.deck:
-            jogador.comprar_carta()
-        if bot.deck:
-            bot.comprar_carta()
+def batalha(jogador, inimigo):
+    turno = 1
 
-    # 🔁 Loop principal da batalha
-    while jogador.vida > 0 and bot.vida > 0:
-        turno_jogador(jogador, bot)
-        if bot.vida <= 0:
-            print(f"🎉 {jogador.nome} venceu a batalha!")
-            exibir_status_heroi(jogador.nome)
+    while jogador.vida > 0 and inimigo.vida > 0:
+        limpar_tela()
+        print(f"\n⚔️ Rodada {turno} ⚔️")
+        print(f"{jogador.nome}: {jogador.vida} de vida | Mana: {jogador.mana}")
+        print(f"{inimigo.nome}: {inimigo.vida} de vida | Mana: {inimigo.mana}")
+
+        jogador.mana = turno  # Ganha 1 de mana por turno
+        inimigo.mana = turno
+
+        jogador.comprar_carta()
+        inimigo.comprar_carta()
+
+        turno_jogador(jogador, inimigo)
+        if inimigo.vida <= 0:
             break
 
-        turno_inimigo(bot, jogador)
+        turno_inimigo(inimigo, jogador)
         if jogador.vida <= 0:
-            print(f"💀 {bot.nome} venceu a batalha!")
             break
 
-    # 🔚 Limpa a mão dos dois jogadores após o fim da batalha
-    jogador.limpar_mao()
-    bot.limpar_mao()
+        turno += 1
+
+    print("\n🏁 Fim da batalha!")
+    if jogador.vida <= 0 and inimigo.vida <= 0:
+        print("🪦 Empate! Ambos os jogadores foram derrotados.")
+    elif jogador.vida <= 0:
+        print("💀 Você foi derrotado...")
+    else:
+        print("🎉 Vitória! O inimigo foi vencido.")
+
+    pausar()
