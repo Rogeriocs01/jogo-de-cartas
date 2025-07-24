@@ -1,67 +1,47 @@
 # interface_pygame/selecao_heroi_pygame.py
 import pygame
-import sys
 import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from personagens_data import personagens
+import sys
+import json
 
+# Adiciona raiz ao path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+from jogador.gerenciador_herois import carregar_herois
 
 class SelecaoHeroiPygame:
     def __init__(self, screen):
         self.screen = screen
-        self.largura = screen.get_width()
-        self.altura = screen.get_height()
-        self.fonte = pygame.font.SysFont("arial", 22)
-        self.herois = personagens
-        self.heroi_selecionado = None
+        self.herois = carregar_herois()
+        self.fonte = pygame.font.SysFont("arial", 24)
         self.botoes = []
 
     def desenhar(self):
-        self.screen.fill((15, 15, 15))
+        self.screen.fill((30, 30, 30))
         titulo = self.fonte.render("Selecione seu Herói", True, (255, 255, 255))
-        self.screen.blit(titulo, (self.largura // 2 - titulo.get_width() // 2, 20))
+        self.screen.blit(titulo, (self.screen.get_width() // 2 - titulo.get_width() // 2, 40))
         self.botoes = []
 
-        colunas = 3
-        espacamento_x = 300
-        espacamento_y = 130
-        margem_x = 60
-        margem_y = 70
-
         for i, heroi in enumerate(self.herois):
-            col = i % colunas
-            lin = i // colunas
+            nome = heroi["nome"]
+            y = 100 + i * 70
+            rect = pygame.Rect(100, y, 400, 50)
+            pygame.draw.rect(self.screen, (60, 60, 60), rect, border_radius=6)
+            pygame.draw.rect(self.screen, (255, 255, 255), rect, 2, border_radius=6)
 
-            x = margem_x + col * espacamento_x
-            y = margem_y + lin * espacamento_y
-            rect = pygame.Rect(x, y, 260, 100)
-
-            pygame.draw.rect(self.screen, (50, 50, 50), rect, border_radius=8)
-            pygame.draw.rect(self.screen, (255, 255, 255), rect, 2, border_radius=8)
-
-            nome = self.fonte.render(f"Nome: {heroi['nome']}", True, (255, 255, 255))
-            terreno = self.fonte.render(f"Terreno: {heroi['terreno']}", True, (180, 180, 180))
-            habilidade = self.fonte.render(f"Habilidade: {heroi['habilidade_especial'] or 'N/A'}", True, (180, 180, 180))
-
-            self.screen.blit(nome, (x + 10, y + 10))
-            self.screen.blit(terreno, (x + 10, y + 35))
-            self.screen.blit(habilidade, (x + 10, y + 60))
-
-            self.botoes.append((rect, heroi))
-
-        self.botao_voltar = pygame.Rect(20, self.altura - 60, 150, 40)
-        pygame.draw.rect(self.screen, (100, 100, 100), self.botao_voltar, border_radius=6)
-        texto_voltar = self.fonte.render("← Voltar", True, (255, 255, 255))
-        self.screen.blit(texto_voltar, (self.botao_voltar.x + 20, self.botao_voltar.y + 8))
+            texto = self.fonte.render(nome, True, (255, 255, 255))
+            self.screen.blit(texto, (120, y + 10))
+            self.botoes.append((rect, nome))
 
     def verificar_clique(self, pos):
-        for rect, heroi in self.botoes:
+        for rect, nome in self.botoes:
             if rect.collidepoint(pos):
-                print(f"✅ Herói selecionado: {heroi['nome']}")
-                self.heroi_selecionado = heroi
-                return heroi
+                self.salvar_heroi_escolhido(nome)
+                print(f"✅ Herói selecionado: {nome}")
+                return True
+        return False
 
-        if self.botao_voltar.collidepoint(pos):
-            return "voltar"
-
-        return None
+    def salvar_heroi_escolhido(self, nome_heroi):
+        caminho = os.path.join("dados", "escolha_heroi.json")
+        with open(caminho, "w") as f:
+            json.dump({"heroi_escolhido": nome_heroi}, f)

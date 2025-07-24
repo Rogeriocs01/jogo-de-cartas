@@ -1,5 +1,6 @@
 import random
-from inventario_jogador import adicionar_carta
+from gerenciamento.inventario_jogador import adicionar_carta
+
 
 drops_por_personagem = {
     "Thorin, o Bravo": [

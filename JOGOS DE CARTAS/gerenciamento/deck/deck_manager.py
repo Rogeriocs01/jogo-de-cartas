@@ -1,8 +1,9 @@
 import random
-from card_repository import get_carta_by_id
-from inventario_jogador import carregar_inventario
-from personagens_data import personagens
-from progresso_heroi import carregar_progresso, get_tamanho_maximo_deck
+from cartas.card_repository import get_carta_by_id
+from gerenciamento.inventario_jogador import carregar_inventario
+
+from data.personagens_data import personagens
+from herois.progresso_heroi import carregar_progresso, get_tamanho_maximo_deck
 
 def criar_deck_automatico(personagem_nome: str):
     """

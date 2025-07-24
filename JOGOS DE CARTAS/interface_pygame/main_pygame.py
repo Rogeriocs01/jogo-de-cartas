@@ -1,9 +1,12 @@
 # interface_pygame/main_pygame.py
+
+
+import os
 import pygame
 import sys
 from menu_pygame import MenuInicialPygame
 from selecao_heroi_pygame import SelecaoHeroiPygame
-
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 
 

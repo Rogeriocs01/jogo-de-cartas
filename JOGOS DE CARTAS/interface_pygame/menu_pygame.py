@@ -1,5 +1,11 @@
 # interface_pygame/menu_pygame.py
 import pygame
+# Adiciona o diretório raiz do projeto ao sys.path
+import os
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from interface_pygame.deck_builder_pygame import abrir_deckbuilder_pygame
+
 
 class MenuInicialPygame:
     def __init__(self, screen):
@@ -44,3 +50,4 @@ class MenuInicialPygame:
                 print(f"🖱️ Botão clicado: {texto}")
                 return texto
         return None
+

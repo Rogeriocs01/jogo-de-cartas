@@ -1,95 +1,92 @@
 # 🃏 Jogo de Cartas PvE com Campanha, Heróis e Decks Personalizados
 
-Projeto em Python de um jogo de cartas tático com progressão por fases, heróis jogáveis, IA inimiga, montagem de decks e foco futuro em interface gráfica com Pygame para Android.
+Projeto em Python de um jogo de cartas tático com progressão por fases, heróis jogáveis, IA inimiga, montagem de decks e foco futuro em interface gráfica com Pygame (modo paisagem para Android). Arquitetura escalável para futura integração com motores como Unity.
 
 ---
 
-## 🗂️ Estrutura do Projeto
+## 🗂️ Estrutura de Diretórios (Atualizado)
 
-📁 **batalha/** – Lógica de batalha
+📁 **batalha/** – Sistema de batalha (principal)
 - `motor.py` – Loop principal de combate
-- `turno_jogador.py`, `turno_inimigo.py` – Lógica dos turnos
-- `jogador.py` – Classe base do jogador (deck, mão, mana etc.)
+- `turno_jogador.py`, `turno_inimigo.py` – Ações dos turnos
+- `jogador.py` – Classe base do jogador (vida, mana, campo etc.)
+- `habilidade_cartas.py`, `habilidade_heroi.py` – Execução de habilidades
 
-📁 **campanha/** – Sistema de fases
-- `controlador.py` – Executa a campanha
-- `fases.py` – Define a dificuldade e inimigos por fase
-- `inimigos.py` – Dados dos personagens inimigos
-- `recompensas_por_fase.py` – Geração de recompensa fixa em marcos
-- `progresso_fases.py` – Exibição do mapa de fases com status
+📁 **cartas/** – Sistema de cartas
+- `card_repository.py` – Base de dados com todas as cartas
+- `carta.py` – Classe `Carta` (estrutura e comportamento)
 
-📁 **dados/** – Dados auxiliares
-- `status_heroi.py` – Mostra status do herói após vitória
-- `painel_progresso.py` – XP, níveis e progresso de todos os heróis
+📁 **campanha/** – Fases da campanha
+- `controlador.py` – Executa as fases
+- `fases.py` – Dados das fases (dificuldade, inimigos)
+- `inimigos.py` – Atributos dos personagens inimigos
+- `recompensas_por_fase.py` – Recompensas fixas por progresso
+- `progresso_fases.py` – Mapa visual das fases
 
-📁 **habilidades/** – Habilidades de cartas e heróis
-- `comuns.py`, `executores.py`, `habilidades_heroi.py`
+📁 **dados/** – Componentes informativos
+- `painel_progresso.py` – Exibe XP, níveis e progresso
+- `status_heroi.py` – Mostra status do herói após vitórias
 
-📁 **imagens/** – Imagens das cartas para a interface Pygame
+📁 **gerenciamento/** – Sistema de controle do jogo
+- `inventario_jogador.py` – Inventário global de cartas
+- `jogador_global.py` – Dados do jogador (moedas, nome)
+- `drops_personagens.py` – Drops específicos por personagem
+- `deck_manager.py` – Montagem de decks automática e manual
+
+📁 **herois/** – Estrutura e carregamento dos heróis
+- `gerenciador_heroi.py` – Classe Heroi, compra, invocação, ataques
+- `progresso_heroi.py` – XP, níveis e fases por herói
+
+📁 **imagens/** – Ilustrações das cartas (usadas no Pygame)
+
+📁 **interface/** (em breve) – Componentes visuais com Pygame
 
 📁 **raiz/**
-- `main.py` – (foco atual: terminal)
-- `main_pygame.py` – (início da versão gráfica)
-- `menu_inicial.py` – Menu principal
-- `personagens_data.py` – Lista de heróis e seus dados
-- `card_repository.py` – Base de dados de cartas
-- `carta.py` – Classe base das cartas
-- `efeitos_cartas.py`, `executar_habilidade.py`, `balanceamento_cartas.py`
-
-🟡 **Sistema de Inventário e Progresso**
-- `jogador_global.py` – Dados do jogador (moedas, nome)
-- `inventario_jogador.py` – Inventário global de cartas
-- `progresso_heroi.py` – XP, nível e fase atual dos heróis
-
-🟢 **Decks**
-- `deck_manager.py` – Montagem automática e manual de decks por herói
-
-🛍️ **Loja**
-- `loja.py` – Compra de cartas específicas e baús com moedas
-
-🎁 **Recompensas**
-- `recompensas_cartas.py` – Sorteio de cartas após vitória
+- `main.py` – Execução no terminal
+- `main_pygame.py` – Execução com interface visual
+- `menu_inicial.py` – Menu principal de entrada
+- `personagens_data.py` – Lista com dados dos heróis
+- `recompensas_cartas.py` – Sorteio aleatório após vitórias
+- `loja.py` – Sistema de compras de cartas/baús com moedas
 
 ---
 
 ## 🔮 Roadmap Atual
 
-### ✅ Etapa 1: Sistema de fases e dificuldades
-- ✔️ Cada herói inimigo aparece 3x (fácil, médio, difícil)
-- ✔️ Vida e tamanho do deck aumentam com a dificuldade
+### ✅ Etapa 1: Sistema de fases e dificuldade
+- Heróis inimigos escalam em vida/deck (fácil, médio, difícil)
 
 ### ✅ Etapa 2: Sistema global de jogador
-- ✔️ Inventário e moedas são globais
-- ✔️ Heróis guardam apenas XP e progresso
+- Moedas e inventário globais
+- Heróis com XP, níveis e progresso individual
 
-### ✅ Etapa 3: Inventário, recompensas e loja
-- ✔️ Inventário permite múltiplas cópias de cartas
-- ✔️ Recompensas aleatórias e fixas por marco
-- ✔️ Loja funcional com compra direta e baús
+### ✅ Etapa 3: Inventário e loja
+- Inventário com múltiplas cópias
+- Recompensas variadas e loja funcional
 
-### ✅ Etapa 4: Decks personalizados por herói
-- ✔️ Deck automático baseado no herói
-- ✔️ Deck manual (limite de cópias por carta, tamanho escalável)
-- ✔️ Preparado para edição de deck antes da batalha
+### ✅ Etapa 4: Decks personalizados
+- Montagem automática e manual
+- Restrições por nível e quantidade
 
 ---
 
-## 🖼️ Etapa 5 (Próxima): Interface Gráfica com Pygame
-- Começar desenvolvimento da interface visual
-- Foco em Android (modo paisagem)
-- Suporte a clique, toques, visual de cartas e botões
+## 🖼️ Etapa 5 (Atual): Interface com Pygame
+
+- Início da interface gráfica (modo paisagem, Android)
+- Mostrar mão, campo, botões de ação e status
+- Permitir clique, hover, seleção e animações simples
 
 ---
 
-## ✅ Requisitos
+## 📦 Requisitos
 
 - Python 3.10+
-- Pygame (`pip install pygame`)
-- Pastas `dados/`, `imagens/` e arquivos `*.json`
+- Pygame → `pip install pygame`
+- Pastas `dados/`, `imagens/` e arquivos JSON válidos
 
 ---
 
-## 🚀 Como executar
+## 🚀 Como Executar
 
 ```bash
 python menu_inicial.py
