@@ -80,7 +80,7 @@ card_repository = {
     "Carta_75": {"nome": "Guardião da Selva", "tipo": "Floresta", "raridade": "Comum", "ataque": 2, "defesa": 4, "mana": 2, "custo_habilidade": 0},
     "Carta_76": {"nome": "Sacerdote da Tempestade", "tipo": "Vento", "raridade": "Incomum", "ataque": 3, "defesa": 3, "mana": 3, "custo_habilidade": 2},
     "Carta_77": {"nome": "Guardião da Névoa", "tipo": "Água", "raridade": "Incomum", "ataque": 2, "defesa": 5, "mana": 3, "custo_habilidade": 2},
-    "Carta_78": {"nome": "Espíritu Selvagem", "tipo": "Floresta", "raridade": "Incomum", "ataque": 3, "defesa": 3, "mana": 3, "custo_habilidade": 2},
+    "Carta_78": {"nome": "Espírito Selvagem", "tipo": "Floresta", "raridade": "Incomum", "ataque": 3, "defesa": 3, "mana": 3, "custo_habilidade": 2},
     "Carta_79": {"nome": "Guarda Real de Gondren", "tipo": "Planície", "raridade": "Raro", "ataque": 4, "defesa": 5, "mana": 5, "custo_habilidade": 3},
     "Carta_80": {"nome": "Serpente das Profundezas", "tipo": "Água", "raridade": "Raro", "ataque": 5, "defesa": 4, "mana": 5, "custo_habilidade": 3},
     "Carta_81": {"nome": "Bola de Fogo", "mana": 3, "ataque": 0, "defesa": 0, "tipo": "efeito", "raridade": "rara", "efeito": "efeito_dano_direto"},
