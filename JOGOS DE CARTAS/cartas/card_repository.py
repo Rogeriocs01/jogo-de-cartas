@@ -132,3 +132,10 @@ def get_carta_by_id(carta_id):
             raridade=data["raridade"]
         )
     return None
+
+
+def get_carta_by_nome(nome):
+    for carta in todas_as_cartas:
+        if carta["nome"] == nome:
+            return carta
+    return None
