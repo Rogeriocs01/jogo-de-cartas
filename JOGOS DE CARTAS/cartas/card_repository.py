@@ -117,25 +117,12 @@ card_repository = {
 
 }
 
-def get_carta_by_id(carta_id):
-    if carta_id in card_repository:
-        data = card_repository[carta_id]
-        return Carta(
-            id=carta_id,
-            nome=data["nome"],
-            custo_mana=data["mana"],
-            ataque=data["ataque"],
-            defesa=data["defesa"],
-            habilidade=get_habilidade_por_id(carta_id),
-            custo_habilidade=data.get("custo_habilidade", 0),
-            tipo_terreno=data["tipo"],
-            raridade=data["raridade"]
-        )
-    return None
 
+def get_carta_by_id(carta_id):
+    return card_repository.get(carta_id, None)
 
 def get_carta_by_nome(nome):
-    for carta in todas_as_cartas:
+    for carta in card_repository.values():
         if carta["nome"] == nome:
             return carta
     return None
