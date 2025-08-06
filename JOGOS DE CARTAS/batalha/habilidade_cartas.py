@@ -1,5 +1,4 @@
-# batalha/habilidade_cartas.py
-from executar_habilidade import executar_habilidade
+from habilidades.executar_habilidade import executar_habilidade
 
 def usar_habilidade_de_carta(jogador, inimigo):
     print("\nCartas com habilidade disponíveis:")
@@ -33,3 +32,8 @@ def usar_habilidade_de_carta(jogador, inimigo):
     jogador.mana -= carta_escolhida.custo_mana
     executar_habilidade(carta_escolhida.id, carta_escolhida, jogador, inimigo)
     carta_escolhida.habilidade_usada = True
+
+
+# ✅ Função necessária para carregar habilidades por ID
+def get_habilidade_por_id(habilidade_id):
+    return lambda carta, jogador, inimigo: executar_habilidade(habilidade_id, carta, jogador, inimigo)

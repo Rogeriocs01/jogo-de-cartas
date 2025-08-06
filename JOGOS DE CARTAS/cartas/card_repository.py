@@ -1,5 +1,6 @@
 from cartas.carta import Carta
-from habilidades_cartas import get_habilidade_por_id
+
+from batalha.habilidade_cartas import get_habilidade_por_id
 
 # Repositório de cartas do jogo: IDs de "Carta_1" a "Carta_80"
 card_repository = {

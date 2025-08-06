@@ -1,14 +1,14 @@
 # interface_pygame/main_pygame.py
 
-
 import os
 import pygame
 import sys
-from menu_pygame import MenuInicialPygame
-from selecao_heroi_pygame import SelecaoHeroiPygame
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-
+from menu_pygame import MenuInicialPygame
+from selecao_heroi_pygame import SelecaoHeroiPygame
+from interface_pygame.deck_builder_pygame import abrir_deckbuilder_pygame
 
 # Inicialização do Pygame
 pygame.init()
@@ -41,6 +41,11 @@ while running:
                 acao = menu_visual.verificar_clique(pos)
                 if acao == "Selecionar Herói":
                     estado = "selecao_heroi"
+                elif acao == "Editar Deck Manualmente":
+                    if heroi_atual:
+                        abrir_deckbuilder_pygame(screen, heroi_atual["nome"])
+                    else:
+                        print("⚠️ Nenhum herói selecionado.")
                 elif acao == "Sair":
                     running = False
                 elif acao:

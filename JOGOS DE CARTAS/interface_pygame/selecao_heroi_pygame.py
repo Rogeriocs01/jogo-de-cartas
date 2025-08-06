@@ -7,7 +7,9 @@ import json
 # Adiciona raiz ao path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from jogador.gerenciador_herois import carregar_herois
+
+from herois.gerenciador_heroi import carregar_herois
+
 
 class SelecaoHeroiPygame:
     def __init__(self, screen):

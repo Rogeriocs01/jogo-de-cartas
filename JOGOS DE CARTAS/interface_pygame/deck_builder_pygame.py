@@ -1,125 +1,113 @@
-# interface_pygame/deck_builder_pygame.py
-
 import pygame
-import sys
+import json
 import os
+pygame.init()
+CAMINHO_IMAGENS = os.path.join("interface_pygame", "assets", "cartas")
+CAMINHO_DADOS_HEROIS = os.path.join("dados", "herois")
+CAMINHO_DECKS = "dados"
+CAMINHO_INVENTARIO = os.path.join("interface_pygame", "inventario.json")
 
-# Ajuste o sys.path para importar corretamente
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'gerenciamento', 'deck')))
+CARD_WIDTH = 100
+CARD_HEIGHT = 140
+CARD_MARGIN = 15
 
-from gerenciamento.deck.deck_manager import montar_deck_manual, salvar_deck_personalizado, get_tamanho_maximo_deck
-from gerenciamento.inventario_jogador import carregar_inventario
-from cartas.card_repository import get_carta_by_id
+fonte = pygame.font.SysFont("arial", 22)
+
+
+def carregar_imagem(nome_arquivo):
+    caminho = os.path.join(CAMINHO_IMAGENS, f"{nome_arquivo}.png")
+    if not os.path.exists(caminho):
+        print(f"[ERRO] Imagem não encontrada: {caminho}")
+        return None
+    return pygame.transform.scale(pygame.image.load(caminho), (CARD_WIDTH, CARD_HEIGHT))
+
+
+def carregar_inventario():
+    with open(CAMINHO_INVENTARIO, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+
+def carregar_nivel_heroi(nome_heroi):
+    caminho = os.path.join(CAMINHO_DADOS_HEROIS, f"{nome_heroi}.json")
+    if not os.path.exists(caminho):
+        return 1  # padrão caso herói não exista ainda
+    with open(caminho, "r", encoding="utf-8") as f:
+        dados = json.load(f)
+        return dados.get("nivel", 1)
+
+
+def salvar_deck(nome_heroi, deck):
+    caminho = os.path.join(CAMINHO_DECKS, f"deck_{nome_heroi}.json")
+    with open(caminho, "w", encoding="utf-8") as f:
+        json.dump(deck, f, indent=4, ensure_ascii=False)
+
 
 def abrir_deckbuilder_pygame(screen, nome_heroi):
-    class DeckBuilderPygame:
-        def __init__(self):
-            self.heroi_nome = nome_heroi
-            self.inventario = carregar_inventario()
-            self.deck = montar_deck_manual(self.heroi_nome)
-            self.tamanho_max = get_tamanho_maximo_deck(self.heroi_nome)
-            self.limite_por_carta = 3
+    inventario = carregar_inventario()
+    nivel_heroi = carregar_nivel_heroi(nome_heroi)
+    limite_cartas = 10 + nivel_heroi * 2
 
-            self.screen = screen
-            self.fonte = pygame.font.SysFont("arial", 22)
-            self.clock = pygame.time.Clock()
+    deck = []  # lista de nomes
 
-            self.botoes_inventario = []
-            self.botoes_deck = []
+    cartas = []
+    for nome, qtd in inventario.items():
+        nome_formatado = nome.replace(" ", "_").replace("ã", "a").replace("ç", "c").replace("é", "e").replace("ê", "e").replace("á", "a").replace("ó", "o").replace("ô", "o").replace("í", "i").replace("ú", "u").replace("â", "a").replace("õ", "o")
+        imagem = carregar_imagem(nome_formatado)
+        if imagem:
+            cartas.append({"nome": nome, "imagem": imagem, "quantidade": qtd})
 
-        def desenhar_texto(self, texto, x, y, cor=(255, 255, 255)):
-            img = self.fonte.render(texto, True, cor)
-            self.screen.blit(img, (x, y))
+    clock = pygame.time.Clock()
+    selecionando = True
 
-        def contar_ocorrencias(self, carta_nome):
-            return sum(1 for c in self.deck if c.nome == carta_nome)
+    while selecionando:
+        screen.fill((15, 15, 15))
 
-        def executar(self):
-            rodando = True
-            while rodando:
-                self.screen.fill((20, 20, 20))
-                self.botoes_inventario = []
-                self.botoes_deck = []
+        y = 20
+        x = 20
 
-                self.desenhar_texto(f"Montando deck de: {self.heroi_nome}", 30, 20)
-                self.desenhar_texto(f"Cartas no deck: {len(self.deck)} / {self.tamanho_max}", 30, 50)
+        for carta in cartas:
+            screen.blit(carta["imagem"], (x, y))
+            qtd_no_deck = deck.count(carta["nome"])
+            texto = fonte.render(f"{carta['nome']} ({qtd_no_deck}/{carta['quantidade']})", True, (255, 255, 255))
+            screen.blit(texto, (x, y + CARD_HEIGHT + 5))
 
-                # INVENTÁRIO
-                y_offset = 100
-                self.desenhar_texto("INVENTÁRIO:", 30, y_offset)
-                y_offset += 30
-                for cid, qtd in self.inventario.items():
-                    if qtd == 0:
-                        continue
-                    texto = f"{cid} (x{qtd})"
-                    self.desenhar_texto(texto, 40, y_offset)
-                    botao_rect = pygame.Rect(300, y_offset, 30, 25)
-                    pygame.draw.rect(self.screen, (0, 200, 0), botao_rect)
-                    self.desenhar_texto("+", botao_rect.x + 8, botao_rect.y + 2, (0, 0, 0))
-                    self.botoes_inventario.append((botao_rect, cid))
-                    y_offset += 30
+            carta["rect"] = pygame.Rect(x, y, CARD_WIDTH, CARD_HEIGHT)
 
-                # DECK
-                y_offset = 100
-                self.desenhar_texto("DECK:", 550, y_offset)
-                y_offset += 30
+            x += CARD_WIDTH + CARD_MARGIN
+            if x + CARD_WIDTH > screen.get_width():
+                x = 20
+                y += CARD_HEIGHT + 50
 
-                tipos_adicionados = {}
-                for carta in self.deck:
-                    nome = carta.nome
-                    tipos_adicionados[nome] = tipos_adicionados.get(nome, 0) + 1
+        # Mostrar status
+        texto_deck = fonte.render(f"Deck: {len(deck)} / {limite_cartas}", True, (255, 255, 0))
+        screen.blit(texto_deck, (20, screen.get_height() - 40))
 
-                for nome, qtd in tipos_adicionados.items():
-                    self.desenhar_texto(f"{nome} (x{qtd})", 560, y_offset)
-                    botao_rect = pygame.Rect(850, y_offset, 30, 25)
-                    pygame.draw.rect(self.screen, (200, 0, 0), botao_rect)
-                    self.desenhar_texto("-", botao_rect.x + 8, botao_rect.y + 2, (0, 0, 0))
-                    self.botoes_deck.append((botao_rect, nome))
-                    y_offset += 30
+        # Botão salvar
+        botao_salvar = pygame.Rect(screen.get_width() - 150, screen.get_height() - 50, 130, 40)
+        pygame.draw.rect(screen, (0, 200, 0), botao_salvar)
+        txt_salvar = fonte.render("Salvar Deck", True, (0, 0, 0))
+        screen.blit(txt_salvar, (botao_salvar.x + 10, botao_salvar.y + 8))
 
-                # Botão Salvar
-                salvar_rect = pygame.Rect(400, 640, 200, 40)
-                pygame.draw.rect(self.screen, (100, 200, 255), salvar_rect, border_radius=10)
-                self.desenhar_texto("Salvar Deck", salvar_rect.x + 40, salvar_rect.y + 8, (0, 0, 0))
+        pygame.display.flip()
 
-                for evento in pygame.event.get():
-                    if evento.type == pygame.QUIT:
-                        pygame.quit()
-                        sys.exit()
+        for evento in pygame.event.get():
+            if evento.type == pygame.QUIT:
+                selecionando = False
 
-                    elif evento.type == pygame.MOUSEBUTTONDOWN and evento.button == 1:
-                        pos = pygame.mouse.get_pos()
+            elif evento.type == pygame.MOUSEBUTTONDOWN and evento.button == 1:
+                pos = pygame.mouse.get_pos()
 
-                        # Adicionar carta
-                        for rect, cid in self.botoes_inventario:
-                            if rect.collidepoint(pos):
-                                qtd_no_deck = self.contar_ocorrencias(cid)
-                                qtd_no_inventario = self.inventario.get(cid, 0)
-                                if (len(self.deck) < self.tamanho_max and 
-                                    qtd_no_deck < min(qtd_no_inventario, self.limite_por_carta)):
-                                    try:
-                                        carta = get_carta_by_id(cid)
-                                        self.deck.append(carta)
-                                    except ValueError:
-                                        pass
+                # Clique nas cartas
+                for carta in cartas:
+                    if carta["rect"].collidepoint(pos):
+                        qtd_atual = deck.count(carta["nome"])
+                        if qtd_atual < carta["quantidade"] and len(deck) < limite_cartas:
+                            deck.append(carta["nome"])
 
-                        # Remover carta
-                        for rect, nome in self.botoes_deck:
-                            if rect.collidepoint(pos):
-                                for carta in self.deck:
-                                    if carta.nome == nome:
-                                        self.deck.remove(carta)
-                                        break
+                # Clique em salvar
+                if botao_salvar.collidepoint(pos):
+                    salvar_deck(nome_heroi, deck)
+                    print(f"✅ Deck salvo para {nome_heroi} com {len(deck)} cartas.")
+                    selecionando = False
 
-                        # Salvar
-                        if salvar_rect.collidepoint(pos):
-                            salvar_deck_personalizado(self.heroi_nome, self.deck)
-                            print("\n💾 Deck salvo com sucesso!")
-                            rodando = False
-
-                pygame.display.flip()
-                self.clock.tick(60)
-
-    # Executa a tela do deck builder
-    tela = DeckBuilderPygame()
-    tela.executar()
+    return

@@ -124,3 +124,14 @@ def carregar_heroi(nome_heroi):
                 custo_habilidade=h["custo_habilidade"]
             )
     raise ValueError(f"Herói '{nome_heroi}' não encontrado na lista.")
+
+def carregar_herois():
+    herois = []
+    for h in herois_disponiveis:
+        herois.append({
+            "nome": h["nome"],
+            "terreno": h["terreno"],
+            "habilidade_especial": h["habilidade_especial"],
+            "custo_habilidade": h["custo_habilidade"]
+        })
+    return herois
