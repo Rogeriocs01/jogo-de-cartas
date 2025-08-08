@@ -60,6 +60,14 @@ while running:
                 elif resultado == "voltar":
                     estado = "menu"
 
+        # 🔁 Suporte à rolagem vertical com a roda do mouse
+        elif event.type == pygame.MOUSEWHEEL:
+            if estado == "selecao_heroi":
+                if event.y > 0:
+                    selecao_heroi.rolar("cima")
+                else:
+                    selecao_heroi.rolar("baixo")
+
     # Desenhar a tela atual
     if estado == "menu":
         menu_visual.desenhar()

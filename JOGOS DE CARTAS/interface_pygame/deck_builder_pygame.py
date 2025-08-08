@@ -1,7 +1,11 @@
+# interface_pygame/deck_builder_pygame.py
+
 import pygame
 import json
 import os
+
 pygame.init()
+
 CAMINHO_IMAGENS = os.path.join("interface_pygame", "assets", "cartas")
 CAMINHO_DADOS_HEROIS = os.path.join("dados", "herois")
 CAMINHO_DECKS = "dados"
@@ -13,48 +17,56 @@ CARD_MARGIN = 15
 
 fonte = pygame.font.SysFont("arial", 22)
 
-
 def carregar_imagem(nome_arquivo):
     caminho = os.path.join(CAMINHO_IMAGENS, f"{nome_arquivo}.png")
-    if not os.path.exists(caminho):
-        print(f"[ERRO] Imagem não encontrada: {caminho}")
-        return None
-    return pygame.transform.scale(pygame.image.load(caminho), (CARD_WIDTH, CARD_HEIGHT))
-
+    if os.path.exists(caminho):
+        return pygame.transform.scale(pygame.image.load(caminho), (CARD_WIDTH, CARD_HEIGHT))
+    else:
+        print(f"⚠️ Imagem não encontrada: {caminho}")
+        # Cria imagem padrão com nome da carta
+        imagem = pygame.Surface((CARD_WIDTH, CARD_HEIGHT))
+        imagem.fill((60, 60, 60))
+        fonte_padrao = pygame.font.SysFont("arial", 16)
+        texto = fonte_padrao.render(nome_arquivo[:10], True, (255, 255, 255))
+        imagem.blit(texto, (5, 60))
+        return imagem
 
 def carregar_inventario():
     with open(CAMINHO_INVENTARIO, "r", encoding="utf-8") as f:
         return json.load(f)
 
-
 def carregar_nivel_heroi(nome_heroi):
     caminho = os.path.join(CAMINHO_DADOS_HEROIS, f"{nome_heroi}.json")
     if not os.path.exists(caminho):
-        return 1  # padrão caso herói não exista ainda
+        return 1  # padrão se não existir
     with open(caminho, "r", encoding="utf-8") as f:
         dados = json.load(f)
         return dados.get("nivel", 1)
-
 
 def salvar_deck(nome_heroi, deck):
     caminho = os.path.join(CAMINHO_DECKS, f"deck_{nome_heroi}.json")
     with open(caminho, "w", encoding="utf-8") as f:
         json.dump(deck, f, indent=4, ensure_ascii=False)
 
-
 def abrir_deckbuilder_pygame(screen, nome_heroi):
     inventario = carregar_inventario()
     nivel_heroi = carregar_nivel_heroi(nome_heroi)
     limite_cartas = 10 + nivel_heroi * 2
 
-    deck = []  # lista de nomes
+    deck = []
 
     cartas = []
     for nome, qtd in inventario.items():
-        nome_formatado = nome.replace(" ", "_").replace("ã", "a").replace("ç", "c").replace("é", "e").replace("ê", "e").replace("á", "a").replace("ó", "o").replace("ô", "o").replace("í", "i").replace("ú", "u").replace("â", "a").replace("õ", "o")
+        nome_formatado = (
+            nome.lower()
+            .replace(" ", "_")
+            .replace("ã", "a").replace("õ", "o").replace("á", "a")
+            .replace("é", "e").replace("ê", "e").replace("í", "i")
+            .replace("ó", "o").replace("ô", "o").replace("ú", "u")
+            .replace("â", "a").replace("ç", "c")
+        )
         imagem = carregar_imagem(nome_formatado)
-        if imagem:
-            cartas.append({"nome": nome, "imagem": imagem, "quantidade": qtd})
+        cartas.append({"nome": nome, "imagem": imagem, "quantidade": qtd})
 
     clock = pygame.time.Clock()
     selecionando = True
@@ -70,7 +82,6 @@ def abrir_deckbuilder_pygame(screen, nome_heroi):
             qtd_no_deck = deck.count(carta["nome"])
             texto = fonte.render(f"{carta['nome']} ({qtd_no_deck}/{carta['quantidade']})", True, (255, 255, 255))
             screen.blit(texto, (x, y + CARD_HEIGHT + 5))
-
             carta["rect"] = pygame.Rect(x, y, CARD_WIDTH, CARD_HEIGHT)
 
             x += CARD_WIDTH + CARD_MARGIN
@@ -78,11 +89,9 @@ def abrir_deckbuilder_pygame(screen, nome_heroi):
                 x = 20
                 y += CARD_HEIGHT + 50
 
-        # Mostrar status
         texto_deck = fonte.render(f"Deck: {len(deck)} / {limite_cartas}", True, (255, 255, 0))
         screen.blit(texto_deck, (20, screen.get_height() - 40))
 
-        # Botão salvar
         botao_salvar = pygame.Rect(screen.get_width() - 150, screen.get_height() - 50, 130, 40)
         pygame.draw.rect(screen, (0, 200, 0), botao_salvar)
         txt_salvar = fonte.render("Salvar Deck", True, (0, 0, 0))
@@ -97,14 +106,12 @@ def abrir_deckbuilder_pygame(screen, nome_heroi):
             elif evento.type == pygame.MOUSEBUTTONDOWN and evento.button == 1:
                 pos = pygame.mouse.get_pos()
 
-                # Clique nas cartas
                 for carta in cartas:
                     if carta["rect"].collidepoint(pos):
                         qtd_atual = deck.count(carta["nome"])
                         if qtd_atual < carta["quantidade"] and len(deck) < limite_cartas:
                             deck.append(carta["nome"])
 
-                # Clique em salvar
                 if botao_salvar.collidepoint(pos):
                     salvar_deck(nome_heroi, deck)
                     print(f"✅ Deck salvo para {nome_heroi} com {len(deck)} cartas.")
