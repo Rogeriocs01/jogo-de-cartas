@@ -1,41 +1,45 @@
+# Creating a corrected full `card_repository.py` file with complete entries and filename slugging.
+# The file will be written to /mnt/data/card_repository_final.py for you to download.
 from cartas.carta import Carta
-
 from batalha.habilidade_cartas import get_habilidade_por_id
+import unicodedata
+import re
 
-# Repositório de cartas do jogo: IDs de "Carta_1" a "Carta_80"
+# Raw card data (display names, stats)
 card_repository = {
-    "Carta_1": {"nome": "Dragão de Lava", "tipo": "Lava", "raridade": "Raro", "ataque": 7, "defesa": 5, "mana": 6,  "custo_habilidade": 3},
-    "Carta_2": {"nome": "Sentinela de Água", "tipo": "Água", "raridade": "Comum", "ataque": 2, "defesa": 4, "mana": 2, "custo_habilidade": 1},
-    "Carta_3": {"nome": "Golem de Pedra", "tipo": "Terra", "raridade": "Comum", "ataque": 3, "defesa": 6, "mana": 3,  "custo_habilidade": 1},
-    "Carta_4": {"nome": "Fada da Luz", "tipo": "Luz", "raridade": "Incomum", "ataque": 1, "defesa": 2, "mana": 2, "custo_habilidade": 2},
-    "Carta_5": {"nome": "Espectro das Sombras", "tipo": "Trevas", "raridade": "Raro", "ataque": 5, "defesa": 3, "mana": 4, "custo_habilidade": 3},
-    "Carta_6": {"nome": "Mago de Fogo", "tipo": "Lava", "raridade": "Comum", "ataque": 4, "defesa": 2, "mana": 3, "custo_habilidade": 1},
-    "Carta_7": {"nome": "Guardião da Floresta", "tipo": "Floresta", "raridade": "Incomum", "ataque": 2, "defesa": 5, "mana": 3, "custo_habilidade": 2},
-    "Carta_8": {"nome": "Sereia Encantadora", "tipo": "Água", "raridade": "Raro", "ataque": 3, "defesa": 4, "mana": 4,  "custo_habilidade": 3},
-    "Carta_9": {"nome": "Espadachim Élfico", "tipo": "Floresta", "raridade": "Comum", "ataque": 3, "defesa": 3, "mana": 2, "custo_habilidade": 1},
-    "Carta_10": {"nome": "Anjo Guardião", "tipo": "Luz", "raridade": "Raro", "ataque": 4, "defesa": 6, "mana": 5, "custo_habilidade": 3},
-    "Carta_11": {"nome": "Lobo da Nevasca", "tipo": "Vento", "raridade": "Incomum", "ataque": 3, "defesa": 2, "mana": 3, "custo_habilidade": 2},
-    "Carta_12": {"nome": "Curandeiro de Elmswood", "tipo": "Floresta", "raridade": "Comum", "ataque": 1, "defesa": 4, "mana": 2, "custo_habilidade": 1},
-    "Carta_13": {"nome": "Guardião de Rocha", "tipo": "Terra", "raridade": "Incomum", "ataque": 2, "defesa": 5, "mana": 4, "custo_habilidade": 2},
-    "Carta_14": {"nome": "Goblin Selvagem", "tipo": "Lava", "raridade": "Comum", "ataque": 2, "defesa": 1, "mana": 1, "custo_habilidade": 1},
-    "Carta_15": {"nome": "Serpente da Água", "tipo": "Água", "raridade": "Comum", "ataque": 3, "defesa": 2, "mana": 2, "custo_habilidade": 1},
-    "Carta_16": {"nome": "Árvore Ancestral", "tipo": "Floresta", "raridade": "Raro", "ataque": 2, "defesa": 7, "mana": 5, "custo_habilidade": 3},
-    "Carta_17": {"nome": "Escudeiro da Planície", "tipo": "Planície", "raridade": "Comum", "ataque": 2, "defesa": 3, "mana": 2, "custo_habilidade": 1},
-    "Carta_18": {"nome": "Bomba Viva", "tipo": "Lava", "raridade": "Incomum", "ataque": 3, "defesa": 2, "mana": 4, "custo_habilidade": 2},
-    "Carta_19": {"nome": "Guerreiro de Gondren", "tipo": "Planície", "raridade": "Comum", "ataque": 3, "defesa": 3, "mana": 3, "custo_habilidade": 1},
-    "Carta_20": {"nome": "Ilusionista Etéreo", "tipo": "Vento", "raridade": "Raro", "ataque": 2, "defesa": 3, "mana": 4, "custo_habilidade": 3},
-    "Carta_21": {"nome": "Guardião da Luz", "tipo": "Luz", "raridade": "Raro", "ataque": 4, "defesa": 5, "mana": 5, "custo_habilidade": 3},
-    "Carta_22": {"nome": "Elemental de Água", "tipo": "Água", "raridade": "Incomum", "ataque": 3, "defesa": 4, "mana": 3, "custo_habilidade": 2},
-    "Carta_23": {"nome": "Cavaleiro da Tempestade", "tipo": "Vento", "raridade": "Raro", "ataque": 5, "defesa": 3, "mana": 5, "custo_habilidade": 3},
-    "Carta_24": {"nome": "Espreitador Sombrio", "tipo": "Trevas", "raridade": "Incomum", "ataque": 3, "defesa": 2, "mana": 3, "custo_habilidade": 2},
-    "Carta_25": {"nome": "Guardião Subterrâneo", "tipo": "Terra", "raridade": "Comum", "ataque": 2, "defesa": 4, "mana": 2, "custo_habilidade": 1},
-    "Carta_26": {"nome": "Feiticeira da Lua", "tipo": "Trevas", "raridade": "Raro", "ataque": 3, "defesa": 4, "mana": 4, "custo_habilidade": 3},
-    "Carta_27": {"nome": "Águia Celeste", "tipo": "Vento", "raridade": "Comum", "ataque": 2, "defesa": 2, "mana": 1, "custo_habilidade": 1},
-    "Carta_28": {"nome": "Lança de Chamas", "tipo": "Lava", "raridade": "Incomum", "ataque": 5, "defesa": 1, "mana": 4, "custo_habilidade": 2},
-    "Carta_29": {"nome": "Xamã Tribal", "tipo": "Floresta", "raridade": "Incomum", "ataque": 2, "defesa": 3, "mana": 3, "custo_habilidade": 2},
-    "Carta_30": {"nome": "Guardião Glacial", "tipo": "Água", "raridade": "Raro", "ataque": 4, "defesa": 6, "mana": 5, "custo_habilidade": 3},
-    "Carta_31": {"nome": "Guardião das Dunas", "tipo": "Planície", "raridade": "Comum", "ataque": 3, "defesa": 2, "mana": 2, "custo_habilidade": 1},
-    "Carta_32": {"nome": "Dragão Etéreo", "tipo": "Vento", "raridade": "Raro", "ataque": 6, "defesa": 4, "mana": 6, "custo_habilidade": 4},
+    "Carta_1": {"nome": "Dragão de Lava", "arquivo": "dragao_de_lava.webp", "tipo": "Lava", "raridade": "Raro", "ataque": 7, "defesa": 5, "mana": 6,  "custo_habilidade": 3},
+    "Carta_2": {"nome": "Sentinela de Água", "arquivo": "sentinela_de_agua.webp", "tipo": "Água", "raridade": "Comum", "ataque": 2, "defesa": 4, "mana": 2, "custo_habilidade": 1},
+    "Carta_3": {"nome": "Golem de Pedra", "arquivo": "golem_de_pedra.webp", "tipo": "Terra", "raridade": "Comum", "ataque": 3, "defesa": 6, "mana": 3,  "custo_habilidade": 1},
+    "Carta_4": {"nome": "Fada da Luz", "tipo": "Luz", "arquivo": "fada_da_luz.webp", "raridade": "Incomum", "ataque": 1, "defesa": 2, "mana": 2, "custo_habilidade": 2},
+    "Carta_5": {"nome": "Espectro das Sombras","arquivo": "espectro_das_sombras.webp", "tipo": "Trevas", "raridade": "Raro", "ataque": 5, "defesa": 3, "mana": 4, "custo_habilidade": 3},
+    "Carta_6": {"nome": "Mago de Fogo","arquivo": "mago_de_fogo.webp", "tipo": "Lava", "raridade": "Comum", "ataque": 4, "defesa": 2, "mana": 3, "custo_habilidade": 1},
+    "Carta_7": {"nome": "Guardião da Floresta", "arquivo": "guardiao_da_floresta.webp", "tipo": "Floresta", "raridade": "Incomum", "ataque": 2, "defesa": 5, "mana": 3, "custo_habilidade": 2},
+    "Carta_8": {"nome": "Sereia Encantadora", "arquivo": "sereia_encantadora.webp", "tipo": "Água", "raridade": "Raro", "ataque": 3, "defesa": 4, "mana": 4,  "custo_habilidade": 3},
+    "Carta_9": {"nome": "Espadachim Élfico", "arquivo": "espadachim_elfico.webp", "tipo": "Floresta", "raridade": "Comum", "ataque": 3, "defesa": 3, "mana": 2, "custo_habilidade": 1},
+    "Carta_10": {"nome": "Anjo Guardião", "arquivo": "anjo_guardiao.webp", "tipo": "Luz", "raridade": "Raro", "ataque": 4, "defesa": 6, "mana": 5, "custo_habilidade": 3},
+    "Carta_11": {"nome": "Lobo da Nevasca", "arquivo": "lobo_da_nevasca.webp", "tipo": "Vento", "raridade": "Incomum", "ataque": 3, "defesa": 2, "mana": 3, "custo_habilidade": 2},
+    "Carta_12": {"nome": "Curandeiro de Elmswood", "arquivo": "curandeiro_de_elmswood.webp", "tipo": "Floresta", "raridade": "Comum", "ataque": 1, "defesa": 4, "mana": 2, "custo_habilidade": 1},
+    "Carta_13": {"nome": "Guardião de Rocha", "arquivo": "guardiao_de_rocha.webp", "tipo": "Terra", "raridade": "Incomum", "ataque": 2, "defesa": 5, "mana": 4, "custo_habilidade": 2},
+    "Carta_14": {"nome": "Goblin Selvagem", "arquivo": "goblin_selvagem.webp", "tipo": "Lava", "raridade": "Comum", "ataque": 2, "defesa": 1, "mana": 1, "custo_habilidade": 1},
+    "Carta_15": {"nome": "Serpente da Água", "arquivo": "serpente_da_agua.webp", "tipo": "Água", "raridade": "Comum", "ataque": 3, "defesa": 2, "mana": 2, "custo_habilidade": 1},
+    "Carta_16": {"nome": "Árvore Ancestral", "arquivo": "arvore_ancestral.webp", "tipo": "Floresta", "raridade": "Raro", "ataque": 2, "defesa": 7, "mana": 5, "custo_habilidade": 3},
+    "Carta_17": {"nome": "Escudeiro da Planície", "arquivo": "escudeiro_da_planice.webp", "tipo": "Planície", "raridade": "Comum", "ataque": 2, "defesa": 3, "mana": 2, "custo_habilidade": 1},
+    "Carta_18": {"nome": "Bomba Viva", "arquivo": "bomba_viva.webp", "tipo": "Lava", "raridade": "Incomum", "ataque": 3, "defesa": 2, "mana": 4, "custo_habilidade": 2},
+    "Carta_19": {"nome": "Guerreiro de Gondren", "arquivo": "guerreiro_de_gondren.webp", "tipo": "Planície", "raridade": "Comum", "ataque": 3, "defesa": 3, "mana": 3, "custo_habilidade": 1},
+    "Carta_20": {"nome": "Ilusionista Etéreo", "arquivo": "ilusionista_etereo.webp", "tipo": "Vento", "raridade": "Raro", "ataque": 2, "defesa": 3, "mana": 4, "custo_habilidade": 3},
+    "Carta_21": {"nome": "Guardião da Luz", "arquivo": "guardiao_da_luz.webp", "tipo": "Luz", "raridade": "Raro", "ataque": 4, "defesa": 5, "mana": 5, "custo_habilidade": 3},
+    "Carta_22": {"nome": "Elemental de Água", "arquivo": "elemental_de_agua.webp", "tipo": "Água", "raridade": "Incomum", "ataque": 3, "defesa": 4, "mana": 3, "custo_habilidade": 2},
+    "Carta_23": {"nome": "Cavaleiro da Tempestade", "arquivo": "cavaleiro_da_tempestade.webp", "tipo": "Vento", "raridade": "Raro", "ataque": 5, "defesa": 3, "mana": 5, "custo_habilidade": 3},
+    "Carta_24": {"nome": "Espreitador Sombrio", "arquivo": "espreitador_sombrio.webp", "tipo": "Trevas", "raridade": "Incomum", "ataque": 3, "defesa": 2, "mana": 3, "custo_habilidade": 2},
+    "Carta_25": {"nome": "Guardião Subterrâneo", "arquivo": "guardiao_subterraneo.webp", "tipo": "Terra", "raridade": "Comum", "ataque": 2, "defesa": 4, "mana": 2, "custo_habilidade": 1},
+    "Carta_26": {"nome": "Feiticeira da Lua", "arquivo": "feiticeira_da_lua.webp", "tipo": "Trevas", "raridade": "Raro", "ataque": 3, "defesa": 4, "mana": 4, "custo_habilidade": 3},
+    "Carta_27": {"nome": "Águia Celeste", "arquivo": "aguia_celeste.webp", "tipo": "Vento", "raridade": "Comum", "ataque": 2, "defesa": 2, "mana": 1, "custo_habilidade": 1},
+    "Carta_28": {"nome": "Lança de Chamas", "arquivo": "lanca_de_chamas.webp", "tipo": "Lava", "raridade": "Incomum", "ataque": 5, "defesa": 1, "mana": 4, "custo_habilidade": 2},
+    "Carta_29": {"nome": "Xamã Tribal", "arquivo": "xama_tribal.webp", "tipo": "Floresta", "raridade": "Incomum", "ataque": 2, "defesa": 3, "mana": 3, "custo_habilidade": 2},
+    "Carta_30": {"nome": "Guardião Glacial", "arquivo": "guardiao_glacial.webp", "tipo": "Água", "raridade": "Raro", "ataque": 4, "defesa": 6, "mana": 5, "custo_habilidade": 3},
+    "Carta_31": {"nome": "Guardião das Dunas", "arquivo": "guardiao_das_dunas.webp", "tipo": "Planície", "raridade": "Comum", "ataque": 3, "defesa": 2, "mana": 2, "custo_habilidade": 1},
+    "Carta_32": {"nome": "Dragão Etéreo", "arquivo": "dragao_etereo.webp", "tipo": "Vento", "raridade": "Raro", "ataque": 6, "defesa": 4, "mana": 6, "custo_habilidade": 4},
+
     "Carta_33": {"nome": "Fênix Incandescente", "tipo": "Lava", "raridade": "Raro", "ataque": 5, "defesa": 3, "mana": 5, "custo_habilidade": 3},
     "Carta_34": {"nome": "Oráculo das Marés", "tipo": "Água", "raridade": "Incomum", "ataque": 2, "defesa": 3, "mana": 3, "custo_habilidade": 2},
     "Carta_35": {"nome": "Vigia da Penumbra", "tipo": "Trevas", "raridade": "Incomum", "ataque": 2, "defesa": 2, "mana": 2, "custo_habilidade": 2},
@@ -104,7 +108,6 @@ card_repository = {
     "Carta_98": {"nome": "Toque do Medo", "mana": 3, "ataque": 0, "defesa": 0, "tipo": "efeito", "raridade": "rara", "efeito": "efeito_debuff_inimigo"},
     "Carta_99": {"nome": "Terror Silencioso", "mana": 2, "ataque": 0, "defesa": 0, "tipo": "efeito", "raridade": "comum", "efeito": "efeito_debuff_inimigo"},
     "Carta_100":{"nome": "Enfraquecer Exército", "mana": 3, "ataque": 0, "defesa": 0, "tipo": "efeito", "raridade": "épica", "efeito": "efeito_debuff_inimigo"},
-        # 🔧 Cartas overpower para testes com o personagem especial "Deus do Debug"
     "Carta_Debug_1": {"nome": "Debugador Supremo 1", "tipo": "Código", "raridade": "Lendária", "ataque": 99, "defesa": 99, "mana": 1, "custo_habilidade": 0},
     "Carta_Debug_2": {"nome": "Debugador Supremo 2", "tipo": "Código", "raridade": "Lendária", "ataque": 99, "defesa": 99, "mana": 1, "custo_habilidade": 0},
     "Carta_Debug_3": {"nome": "Debugador Supremo 3", "tipo": "Código", "raridade": "Lendária", "ataque": 99, "defesa": 99, "mana": 1, "custo_habilidade": 0},
@@ -115,15 +118,64 @@ card_repository = {
     "Carta_Debug_8": {"nome": "Debugador Supremo 8", "tipo": "Código", "raridade": "Lendária", "ataque": 99, "defesa": 99, "mana": 1, "custo_habilidade": 0},
     "Carta_Debug_9": {"nome": "Debugador Supremo 9", "tipo": "Código", "raridade": "Lendária", "ataque": 99, "defesa": 99, "mana": 1, "custo_habilidade": 0},
     "Carta_Debug_10": {"nome": "Debugador Supremo 10", "tipo": "Código", "raridade": "Lendária", "ataque": 99, "defesa": 99, "mana": 1, "custo_habilidade": 0}
-
 }
 
+def _slugify(nome: str) -> str:
+    """Create filename-friendly slug from display name. e.g. 'Dragão de Lava' -> 'dragao_de_lava'"""
+    if not nome:
+        return ""
+    # Normalize accents
+    s = unicodedata.normalize('NFKD', nome)
+    s = s.encode('ascii', 'ignore').decode('ascii')
+    # Lowercase, remove non-alnum (keep spaces and hyphens), replace spaces with underscore
+    s = re.sub(r'[^a-zA-Z0-9\s-]', '', s).strip().lower()
+    s = re.sub(r'\s+', '_', s)
+    return s
+
+# Inject 'arquivo' (filename without extension) into each card's data for convenience
+for cid, data in card_repository.items():
+    data.setdefault('arquivo', _slugify(data.get('nome', cid)))
 
 def get_carta_by_id(carta_id):
-    return card_repository.get(carta_id, None)
+    """
+    Return a Carta instance for the given card id (e.g. 'Carta_1').
+    If the card doesn't exist, return None.
+    """
+    data = card_repository.get(carta_id)
+    if not data:
+        return None
+
+    carta = Carta(
+        id=carta_id,
+        nome=data.get("nome"),
+        custo_mana=data.get("mana", 0),
+        ataque=data.get("ataque", 0),
+        defesa=data.get("defesa", 0),
+        habilidade=get_habilidade_por_id(carta_id),
+        custo_habilidade=data.get("custo_habilidade", 0),
+        tipo_terreno=data.get("tipo"),
+        raridade=data.get("raridade")
+    )
+    # attach arquivo slug so callers can know the image filename: <arquivo>.webp
+    setattr(carta, "arquivo", data.get("arquivo"))
+    return carta
 
 def get_carta_by_nome(nome):
-    for carta in card_repository.values():
-        if carta["nome"] == nome:
-            return carta
+    """
+    Accepts display name (e.g. 'Dragão de Lava') or slug ('dragao_de_lava')
+    and returns a Carta instance or None.
+    """
+    if not nome:
+        return None
+    # Try exact display name match first
+    for cid, data in card_repository.items():
+        if data.get("nome") == nome:
+            return get_carta_by_id(cid)
+    # Try slug match
+    slug = _slugify(nome)
+    for cid, data in card_repository.items():
+        if data.get("arquivo") == slug:
+            return get_carta_by_id(cid)
     return None
+
+
