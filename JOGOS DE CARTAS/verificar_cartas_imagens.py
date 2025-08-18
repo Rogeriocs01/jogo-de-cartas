@@ -11,12 +11,12 @@ def verificar_imagens():
 
     for cid, data in card_repository.items():
         slug = data.get("arquivo") or _slugify(data["nome"])
-        caminho = os.path.join(PASTA_IMAGENS, f"{slug}.webp")
+        caminho = os.path.join(PASTA_IMAGENS, f"{slug}")
         
         if os.path.exists(caminho):
             ok += 1
         else:
-            faltando.append((cid, data["nome"], f"{slug}.webp"))
+            faltando.append((cid, data["nome"], f"{slug}"))
 
     print(f"✅ Imagens encontradas: {ok}/{total}")
     if faltando:
