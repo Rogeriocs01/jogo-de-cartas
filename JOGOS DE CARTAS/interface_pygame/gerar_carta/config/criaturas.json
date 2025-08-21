@@ -1,0 +1,26 @@
+{
+  "tamanho_saida": 512,
+  "default": {
+    "fonte_nome": { "arquivo": null, "tamanho": 24 },
+    "fonte_stats": { "arquivo": null, "tamanho": 24 },
+    "fonte_raridade": { "arquivo": null, "tamanho": 20 },
+    "fonte_habilidade": { "arquivo": null, "tamanho": 18 },
+
+    "pos_terreno": [16, 16],
+    "tam_terreno": [72, 72],
+
+    "pos_nome": [100, 20],
+    "largura_nome": 300,
+
+    "pos_atk": [430, 28],
+    "pos_def": [440, 450],
+    "pos_mana": [40, 450],
+    "pos_raridade": [240, 470],
+
+    "area_habilidade": [60, 360, 392],
+    "cor_texto": [255, 255, 255, 255],
+    "cor_contorno": [0, 0, 0, 255],
+    "contorno_px": 2
+  },
+  "overrides": {}
+}
